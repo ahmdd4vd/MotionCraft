@@ -20,12 +20,12 @@ Click a preview to watch the full video with sound.
 
 <table>
 <tr>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/pi-v2.mp4"><img src="media/pi-v2.gif" alt="Agent harness explainer in the pi-v2 style"></a><br><b>Agent harness explainer</b> · 61 s · English · pi-v2</td>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/hindsight.mp4"><img src="media/hindsight.gif" alt="Hindsight memory explainer"></a><br><b>Hindsight: agent memory</b> · 66 s · Indonesian</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/pi-v2.mp4"><img src="media/pi-v2-preview.gif" alt="Agent harness explainer in the pi-v2 style"></a><br><b>Agent harness explainer</b> · 61 s · English · pi-v2</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/hindsight.mp4"><img src="media/hindsight-preview.gif" alt="Hindsight memory explainer"></a><br><b>Hindsight: agent memory</b> · 66 s · Indonesian</td>
 </tr>
 <tr>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/impeccable.mp4"><img src="media/impeccable.gif" alt="Impeccable skill explainer"></a><br><b>Impeccable: better AI-made websites</b> · 83 s · Indonesian</td>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/tutorial.mp4"><img src="media/tutorial.gif" alt="AI agent video tutorial"></a><br><b>Tutorial: make videos with an AI agent</b> · 53 s · Indonesian</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/impeccable.mp4"><img src="media/impeccable-preview.gif" alt="Impeccable skill explainer"></a><br><b>Impeccable: better AI-made websites</b> · 83 s · Indonesian</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/tutorial.mp4"><img src="media/tutorial-preview.gif" alt="AI agent video tutorial"></a><br><b>Tutorial: make videos with an AI agent</b> · 53 s · Indonesian</td>
 </tr>
 </table>
 
