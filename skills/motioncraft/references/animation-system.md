@@ -1,0 +1,48 @@
+# Animation system
+
+The template in `assets/template` is the animation system. Every motion value comes from `src/style.json` (copied from `styles/<id>/tokens.json`), so a style change never needs code edits.
+
+## Timing helpers (`src/lib`)
+
+| Helper | What it does |
+|---|---|
+| `sec(s)` | seconds -> frames at the style fps |
+| `ramp(f, at, dur)` | 0..1 progress with ease-out, clamped |
+| `spr(f, at, cfg)` | spring from the style tokens |
+| `useTimeline()` | loads `public/timeline.json` (words, beats, scenes, events) |
+| `wordAt(tl, 'word', nth)` | frame where a spoken word starts, 2 frames early (eyes lead ears) |
+| `eventAt(tl, 'id')` | frame of a named event (drop, CTA...) |
+| `snapToBeat(tl, frame)` | nearest beat frame |
+
+Rule: never hard-code a time that belongs to the voice. Use `wordAt`. Hard-coded `sec()` is fine for the example and for music-only videos.
+
+## Building blocks
+
+- `Scene from to` - a scene window. Scenes overlap by `motion.scene.overlap` frames with a blur crossfade. Never hard-cut.
+- `Camera keys` - slow in-out camera moves `[frame, scale, x, y]` plus a tiny constant drift so the frame never goes dead. Max zoom comes from tokens.
+- `Zone name="top|center|bottom"` - keeps headline and hero from competing for space.
+- `Headline items={words('Text with *accent*', at)} level="h0|h1|h2"` - words rise out of blur, one after another, accent gets the accent color.
+- `Word`, `InlineIcon` - single animated word or icon inside a line.
+- `Card`, `Pill`, `Keycap` - UI surfaces that enter with rise + tilt + blur.
+- `Strike` - "not X" crossed out, for the "Not X. Y." pattern.
+- `CheckItem`, `StepCards`, `Callout`, `Counter` - proof and formula scenes. `Counter` only for real numbers, always with a `Credit`.
+- `Frames` - play a PNG sequence (screen recordings, pre-rendered 3D).
+- `Logo3D`, `Mascot`, `FloatingShapes` - real 3D (react-three-fiber). `FloatingShapes` keeps a clear box around the headline.
+- `EndCard` - handle + one line.
+- `McBox kind="text|block"` - wrap any custom element so `qa overlap` can check it.
+
+## Motion rules
+
+1. Enter with ease-out, exit faster than you enter (exit frames < enter frames).
+2. Stagger words 4-5 frames. Never all at once, never slower than a reader.
+3. Hold each state at least `0.8 s + 0.25 s per word` before it changes.
+4. At least 1.5 s between big transitions.
+5. One thing moves big at a time. Everything else is still or drifts gently.
+6. Big moments (reveal, number, logo) land on a beat or the music drop.
+7. Old text leaves before new text enters in the same zone.
+8. Text never bounces visibly: word springs stay soft (tokens), bigger springs only for small UI (pills, icons, 3D).
+9. Motion blur and camera speed stay under the token limits (`motion.limits`).
+
+## Adding a new component
+
+Take values from `S` / `C` (tokens), wrap text/blocks in `McBox`, accept an `at` frame, and hide text color in debug mode like the built-in components do. Then run `qa overlap`.

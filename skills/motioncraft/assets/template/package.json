@@ -1,0 +1,27 @@
+{
+  "name": "motioncraft-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "still": "remotion still src/index.ts Main out/still.png",
+    "render": "remotion render src/index.ts Main out/raw.mp4 --crf=16 --gl=angle",
+    "render:server": "remotion render src/index.ts Main out/raw.mp4 --crf=16 --gl=swangle"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^8.18.0",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "@remotion/layout-utils": "^4.0.0",
+    "@remotion/three": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0",
+    "three": "^0.160.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/three": "^0.160.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "pi-v2",
+  "description": "Clean, bright, airy. Blue-white background, one blue accent, words that come alive from blur, real 3D, everything locked to voice and beat.",
+  "canvas": { "width": 1920, "height": 1080, "fps": 30 },
+  "color": {
+    "ink": "#16181d", "inkStart": "#c9ced6", "muted": "#8a909b",
+    "accent": "#2b7fd4", "accentStart": "#bcd8f6",
+    "success": "#1f9d63", "danger": "#e5484d", "highlight": "#ffb900",
+    "bg": ["#f7f8fa", "#f5f7fa", "#eaf1fb"],
+    "glow": ["rgba(150,195,250,0.55)", "rgba(185,215,252,0.45)"],
+    "card": "#ffffff", "cardBar": "#fbfcfd", "cardBorder": "rgba(20,40,80,0.06)",
+    "object3d": ["#4D9ABF", "#F09082", "#F1BE58", "#9cc8ff", "#ffffff"]
+  },
+  "font": {
+    "display": "Figtree", "mono": "JetBrains Mono",
+    "weights": { "h0": 700, "h1": 600, "h2": 500, "caption": 500 },
+    "size": { "h0": [120, 150], "h1": [64, 76], "h2": [34, 46], "caption": [20, 30] },
+    "lineHeight": { "h0": 1.08, "h1": 1.15, "h2": 1.3, "caption": 1.35 },
+    "tracking": -0.02,
+    "maxLines": 2, "maxWordsPerLine": 7, "accentPerSentence": 1
+  },
+  "layout": {
+    "safe": { "x": 96, "y": 72, "min": 60 },
+    "vertical916": { "bottomUi": 0.2, "rightUi": 0.12 },
+    "zones": { "top": [0.08, 0.3], "center": [0.3, 0.8], "bottom": [0.8, 0.93] }
+  },
+  "ease": {
+    "out": [0.22, 1, 0.36, 1],
+    "inOut": [0.65, 0, 0.35, 1],
+    "in": "quad"
+  },
+  "motion": {
+    "word":  { "inFrames": 12, "blur": 10, "rise": 0.28, "colorFrames": 14, "accentColorFrames": 20, "stagger": [4, 5], "spring": { "damping": 11, "stiffness": 140, "mass": 0.7 } },
+    "wordOut": { "frames": 9, "blur": 10, "rise": 0.12, "stagger": 1.5 },
+    "card":  { "frames": 24, "rise": 180, "rotateX": 12, "blur": 12, "scaleFrom": 0.92 },
+    "pill":  { "spring": { "damping": 13, "stiffness": 150, "mass": 0.6 }, "blur": 6 },
+    "icon":  { "slotFrames": 12, "slotWidth": 1.22, "spring": { "damping": 9, "stiffness": 170, "mass": 0.6 }, "rotate": -14, "float": 3 },
+    "logo3d": { "spring": { "damping": 12, "stiffness": 90, "mass": 1 } },
+    "scene": { "overlap": 17, "scaleIn": 1.07, "shiftIn": 160, "blur": 16, "scaleOut": 0.95 },
+    "camera": { "drift": 8, "maxZoom": 1.2, "maxMotionBlur": 8 },
+    "limits": { "minEnterFrames": 6, "maxEnterFrames": 30, "minStagger": 2, "minHoldBase": 0.8, "holdPerWord": 0.25, "minGapBetweenTransitions": 1.5, "maxSpeedPxPerSec": 2400 }
+  },
+  "shape": { "cardRadius": 22, "pillRadius": 999, "shadow": "0 40px 90px rgba(25,55,105,0.13), 0 8px 20px rgba(25,55,105,0.06)" },
+  "three": {
+    "ambient": 0.52, "key": { "pos": [400, 700, 900], "intensity": 2.0 }, "fill": { "pos": [-600, -100, 400], "intensity": 0.42 },
+    "material": { "roughness": [0.2, 0.35], "clearcoat": 1, "emissive": 0.2 }
+  },
+  "audio": { "music": "dreamy", "sfxPack": "soft-pop", "lufs": -14, "truePeak": -1, "sfxPerMinute": [120, 180] },
+  "knobs": { "energy": 0.5, "density": 0.5, "warmth": 0.4, "roundness": 0.6, "depth": 0.7, "camera": "smooth" }
+}

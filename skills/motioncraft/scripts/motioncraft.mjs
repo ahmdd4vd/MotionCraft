@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+// motioncraft - one entry point for every tool in the skill. Pure Node 18+, no npm install needed.
+import { parseArgs, out, die } from './lib/util.mjs';
+import { doctor, printDoctor } from './lib/doctor.mjs';
+import * as C from './lib/commands.mjs';
+import { qaFile, qaAudio, qaSheet, qaOverlap } from './lib/qa.mjs';
+import { cmdRender } from './lib/render.mjs';
+import { cmdStyle } from './lib/style.mjs';
+
+const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
+
+  doctor [--quick]                     check the machine; never installs (prints a table)
+  new <folder> [--style pi-v2] [--vertical] [--handle @you]   copy the Remotion template
+  style list | check [tokens.json] | knobs [tokens.json] --energy 0-1 --density 0-1 --warmth 0-1 --roundness 0-1 --depth 0-1 --camera still|smooth|active
+  ref get <url|file> | scenes | frames [--every 0.5] | sheet | motion | colors | audio | text | report   [--dir ref]
+  audio analyze <file> [--out a.json] [--full]      BPM, beats, onsets, key, LUFS, true peak, drop, silences
+  vo clean <file> | align <file> [--script script.txt] [--lang id] [--out audio/words.json]
+  music presets | make [--preset dreamy] [--duration 52] [--drop 12.9] [--key D] [--bpm 93] [--spec music.json] [--stems] [--out audio]
+  music audition [...same]             3 x 16 s variations to choose from
+  sfx list | make --cues sfx.json [--bpm 93] [--pack soft-pop] [--density 1] [--out audio/sfx.wav]
+  mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--out audio/final.wav]
+  beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
+  timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
+  qa overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
+  render [--comp Main] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
+`;
+const [cmd, ...rest] = process.argv.slice(2); const a = parseArgs(rest);
+try {
+  switch (cmd) {
+    case 'doctor': { const r = doctor(a); if (a.json) out(r); else console.log(printDoctor(r)); break; }
+    case 'new': out(C.cmdNew(a)); break;
+    case 'style': out(cmdStyle(a)); break;
+    case 'ref': out(C.cmdRef(a)); break;
+    case 'audio': out(C.cmdAudio(a)); break;
+    case 'vo': out(C.cmdVo(a)); break;
+    case 'music': out(C.cmdMusic({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
+    case 'sfx': out(C.cmdSfx({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
+    case 'mix': out(C.cmdMix(a)); break;
+    case 'beat': out(C.cmdBeat(a)); break;
+    case 'timeline': out(C.cmdTimeline(a)); break;
+    case 'render': out(cmdRender(a)); break;
+    case 'qa': { const s = a._[0], f = a._[1];
+      if (s === 'overlap') out(qaOverlap(a)); else if (s === 'sheet') out(qaSheet(f, a)); else if (s === 'audio') out(qaAudio(f)); else if (s === 'file') out(qaFile(f, a));
+      else if (s === 'all') { const r = { file: qaFile(f, a), audio: qaAudio(f), sheet: qaSheet(f, a), overlap: a.comp || a.dir ? qaOverlap(a) : 'skipped (pass --comp/--dir to run inside the project)' }; r.pass = r.file.pass && r.audio.pass && (typeof r.overlap === 'string' || r.overlap.pass); out(r); }
+      else die('usage: qa overlap|sheet|audio|file|all'); break; }
+    case undefined: case 'help': case '--help': case '-h': console.log(HELP); break;
+    default: die(`unknown command "${cmd}"`, 'run: node scripts/motioncraft.mjs help');
+  }
+} catch (e) { die(e.message || String(e)); }
