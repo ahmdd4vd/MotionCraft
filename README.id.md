@@ -20,12 +20,12 @@ Klik preview-nya buat nonton video lengkap pakai suara.
 
 <table>
 <tr>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/pi-v2.mp4"><img src="media/pi-v2-preview.gif" alt="Explainer agent harness, gaya pi-v2"></a><br><b>Explainer agent harness</b> · 61 detik · Inggris · pi-v2</td>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/hindsight.mp4"><img src="media/hindsight-preview.gif" alt="Explainer Hindsight"></a><br><b>Hindsight: memori buat agent</b> · 66 detik · Indonesia</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/pi-v2.mp4"><img src="media/pi-v2-loop.gif" alt="Explainer agent harness, gaya pi-v2"></a><br><b>Explainer agent harness</b> · 61 detik · Inggris · pi-v2</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/hindsight.mp4"><img src="media/hindsight-loop.gif" alt="Explainer Hindsight"></a><br><b>Hindsight: memori buat agent</b> · 66 detik · Indonesia</td>
 </tr>
 <tr>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/impeccable.mp4"><img src="media/impeccable-preview.gif" alt="Explainer Impeccable"></a><br><b>Impeccable: website buatan AI jadi lebih bagus</b> · 83 detik · Indonesia</td>
-<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/tutorial.mp4"><img src="media/tutorial-preview.gif" alt="Tutorial bikin video pakai AI agent"></a><br><b>Tutorial: bikin video pakai AI agent</b> · 53 detik · Indonesia</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/impeccable.mp4"><img src="media/impeccable-loop.gif" alt="Explainer Impeccable"></a><br><b>Impeccable: website buatan AI jadi lebih bagus</b> · 83 detik · Indonesia</td>
+<td width="50%"><a href="https://github.com/ahmdd4vd/motioncraft/releases/download/v0.1.0/tutorial.mp4"><img src="media/tutorial-loop.gif" alt="Tutorial bikin video pakai AI agent"></a><br><b>Tutorial: bikin video pakai AI agent</b> · 53 detik · Indonesia</td>
 </tr>
 </table>
 
