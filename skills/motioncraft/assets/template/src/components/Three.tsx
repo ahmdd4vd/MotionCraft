@@ -2,7 +2,10 @@
 import React, {useEffect, useMemo} from 'react';
 import {interpolate, useCurrentFrame} from 'remotion';
 import {ThreeCanvas} from '@remotion/three';
-import {useThree} from '@react-three/fiber';
+import {useFrame, useThree} from '@react-three/fiber';
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
+import {BokehPass} from 'three/examples/jsm/postprocessing/BokehPass.js';
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
@@ -20,6 +23,24 @@ export const Mat: React.FC<{color: string; finish?: Finish}> = ({color, finish =
   return <meshPhysicalMaterial color={color} metalness={m.metalness} roughness={m.roughness} transmission={m.transmission}
     thickness={m.thickness} ior={m.ior} envMapIntensity={m.envMapIntensity} clearcoat={m.clearcoat}
     emissive={color} emissiveIntensity={finish === 'ceramic' ? L.material.emissive : 0} />;
+};
+
+// Optional depth-aware optical blur. BokehPass renders a depth buffer then
+// composites a focus plane; only the 3D canvas is affected, never UI text.
+export const DepthOfField:React.FC<{enabled?:boolean}> = ({enabled = L.depthOfField.enabled}) => {
+  const {gl, scene, camera, size} = useThree();
+  const config = L.depthOfField;
+  const composer = useMemo(() => {
+    if (!enabled) return null;
+    const c = new EffectComposer(gl);
+    c.addPass(new RenderPass(scene, camera));
+    const b = new BokehPass(scene, camera, {focus:config.focus, aperture:config.aperture, maxblur:config.maxBlur});
+    b.renderToScreen = true;c.addPass(b);
+    return c;
+  }, [gl, scene, camera, enabled]);
+  useEffect(() => {composer?.setSize(size.width,size.height);return () => composer?.dispose();}, [composer,size.width,size.height]);
+  useFrame(() => {composer?.render();}, enabled ? 1 : 0);
+  return null;
 };
 
 // Real perspective-camera motion, separate from Stage.Camera's 2D framing.
@@ -57,7 +78,7 @@ export const Logo3D: React.FC<{svg: string; at: number; size?: number; depth?: n
   const ry = (1 - s) * Math.PI * 1.2 * spin + Math.sin((f - at) / 40) * 0.12; const fl = Math.sin((f - at) / 26) * 14;
   return <div style={{width: size, height: size, opacity: Math.min(1, s * 2)}}>
     <ThreeCanvas width={size} height={size} gl={{alpha: true, antialias: true}} shadows camera={{position: [0, 0, 2200], fov: 26, near: 10, far: 6000}}>
-      <Lights /><Camera3D keys={cameraKeys(2200, at, cameraMove)} /><group scale={0.6 + 0.4 * s} position={[0, fl, 0]} rotation={[0.18 * (1 - s) + 0.08, ry, 0]}><mesh geometry={geo}><Mat color={color} finish={finish} /></mesh></group>
+      <Lights /><DepthOfField /><Camera3D keys={cameraKeys(2200, at, cameraMove)} /><group scale={0.6 + 0.4 * s} position={[0, fl, 0]} rotation={[0.18 * (1 - s) + 0.08, ry, 0]}><mesh geometry={geo}><Mat color={color} finish={finish} /></mesh></group>
     </ThreeCanvas>
   </div>;
 };
@@ -82,7 +103,7 @@ export const Mascot: React.FC<{at: number; size?: number; happy?: boolean; camer
   const bounce = Math.abs(Math.sin((f - at) / 11)) * 0.5; const blink = interpolate((f - at) % 75, [60, 63, 66], [0, 1, 0], cl);
   return <div style={{width: size, height: size * 0.8, transform: `scale(${s})`, opacity: Math.min(1, s * 2)}}>
     <ThreeCanvas width={size} height={size * 0.8} gl={{alpha: true, antialias: true}} shadows camera={{position: [0, 40, 1500], fov: 17, near: 10, far: 6000}}>
-      <Lights /><Camera3D keys={cameraKeys(1500, at, cameraMove)} /><group rotation={[0.12, -0.22 + Math.sin((f - at) / 30) * 0.12, 0]} position={[0, -20 + bounce * 20, 0]}><MochiMesh happy={happy} blink={blink} squash={bounce * 0.6} /></group>
+      <Lights /><DepthOfField /><Camera3D keys={cameraKeys(1500, at, cameraMove)} /><group rotation={[0.12, -0.22 + Math.sin((f - at) / 30) * 0.12, 0]} position={[0, -20 + bounce * 20, 0]}><MochiMesh happy={happy} blink={blink} squash={bounce * 0.6} /></group>
     </ThreeCanvas>
   </div>;
 };
@@ -95,7 +116,7 @@ export const FloatingShapes: React.FC<{at: number; count?: number; w?: number; h
     const x = Math.cos(a) * clearX * r, y = Math.sin(a) * clearY * r; return {x, y, z: -200 - (i % 5) * 120, kind: i % 4, c: cols[i % 4], d: i * 2}; }), [count, cols, clearX, clearY]);
   const rb = useMemo(() => new RoundedBoxGeometry(150, 150, 150, 6, 26), []);
   return <ThreeCanvas width={w} height={h} gl={{alpha: true, antialias: true}} shadows camera={{position: [0, 0, 1800], fov: 40, near: 10, far: 8000}}>
-    <Lights /><Camera3D keys={cameraKeys(1800, at, cameraMove)} />
+    <Lights /><DepthOfField /><Camera3D keys={cameraKeys(1800, at, cameraMove)} />
     {items.map((it, i) => { const s = spr(f, at + it.d, {damping: 12, stiffness: 90, mass: 1}); const t = (f - at) / 30;
       const finish = finishes[i % finishes.length] ?? 'ceramic';
       return <group key={i} position={[it.x, it.y + Math.sin(t + i) * 18, it.z]} rotation={[t * 0.3 + i, t * 0.4 + i * 0.5, 0]} scale={s * beatAccent(f, beats)}>

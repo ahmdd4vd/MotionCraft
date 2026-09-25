@@ -28,7 +28,7 @@ Rule: never hard-code a time that belongs to the voice. Use `wordAt`. Hard-coded
 - `Strike` - "not X" crossed out, for the "Not X. Y." pattern.
 - `CheckItem`, `StepCards`, `Callout`, `Counter` - proof and formula scenes. `Counter` only for real numbers, always with a `Credit`.
 - `Frames` - play a PNG sequence (screen recordings, pre-rendered 3D).
-- `Logo3D`, `Mascot`, `FloatingShapes` - real 3D (react-three-fiber). Use `finish="metal"` or `finish="glass"` on a logo, or `finishes={["ceramic", "metal", "glass"]}` on floating objects. The style tokens set physical roughness, metalness, transmission, environment and soft shadow radius. This is material depth, not a depth-of-field blur pass; true camera DOF remains a separate render/postproduction step. `FloatingShapes` keeps a clear box around the headline.
+- `Logo3D`, `Mascot`, `FloatingShapes` - real 3D (react-three-fiber). Use `finish="metal"` or `finish="glass"` on a logo, or `finishes={["ceramic", "metal", "glass"]}` on floating objects. The style tokens set physical roughness, metalness, transmission, environment and soft shadow radius. Optional depth-aware DOF is exposed via `three.depthOfField` tokens and a `BokehPass`, but defaults off: the pass composites an opaque canvas in current Chromium/ANGLE builds. Enable only in an isolated 3D scene on an opaque matching background and inspect its rendered alpha/compositing; normal transparent-over-DOM scenes must leave it off. `FloatingShapes` keeps a clear box around the headline.
 - `EndCard` - handle + one line.
 - `McBox kind="text|block"` - wrap any custom element so `qa overlap` can check it.
 
