@@ -23,3 +23,5 @@ Doctor never installs anything. It prints a fix command for your OS and a fallba
 Shell wrappers: `scripts/doctor.sh` (macOS/Linux) and `scripts/doctor.ps1` (Windows) just call the same check.
 
 Ask before installing anything on the user's machine. Show them the exact command doctor printed.
+
+GPU device detection is not proof of acceleration. See [GPU/cloud render](gpu-cloud-render.md) before using a paid worker or promising a speedup.

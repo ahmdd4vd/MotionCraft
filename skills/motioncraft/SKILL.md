@@ -134,6 +134,8 @@ For UI/logo cue timing, export structured animation events to `public/timeline.j
 
 For rendered scene reordering/retiming without code edits, use `timeline init launch|tutorial`, edit the board with `timeline edit`, and render `TimelineLaunch` or `TimelineTutorial` using `--timeline storyboard.edited.json`. Existing hand-coded compositions do not consume this plan; separately sync footage, VO and music. See [timeline editor](references/phase1-planning-and-preview.md#reorder-and-retime-the-rendered-video).
 
+For 3D-heavy renders, check the real hardware route with `gpu probe`, and use `worker manifest` / `worker verify` for a portable render job. No cloud provider is auto-provisioned. Follow [GPU/cloud render](references/gpu-cloud-render.md) for the short A/B hardware check, cost warning and fallback.
+
 ## Step 7 - Build scenes
 
 ```bash

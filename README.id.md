@@ -115,3 +115,7 @@ Satu komposisi responsif bisa diekspor ke tiga kanvas asli (1080x1080 IG feed, 1
 ### Editor timeline
 
 Jalankan `motioncraft timeline init launch --out timeline-launch.json`, lalu `timeline edit --board timeline-launch.json --grid audio/beatgrid.json --out timeline-editor.html`. Di halaman lokal, geser blok scene, ubah durasi dan offset penanda beat. Render `TimelineLaunch` dengan `--timeline storyboard.edited.json --grid beatgrid.edited.json`; untuk tutorial gunakan `tutorial` dan `TimelineTutorial`. Dua komposisi ini mengikuti urutan dan durasi baru tanpa edit kode. Komposisi lama yang hard-coded belum. Footage, VO dan musik perlu dicek sinkronnya sendiri; geser beat marker tidak mengubah musik. [Panduan](skills/motioncraft/references/phase1-planning-and-preview.md#reorder-and-retime-the-rendered-video).
+
+### GPU/cloud worker
+
+Untuk 3D berat, `gpu probe` cek apakah GPU terlihat; `worker manifest` dan `worker verify` menyiapkan proyek untuk mesin render pilihanmu. `render --require-gpu --gl angle` menolak software/no-device yang jelas, tapi belum membuktikan Chrome pakai GPU. Tes segmen 3D pendek dan bandingkan waktu GPU vs software di mesin tersebut. Skill ini tidak otomatis membuat VM cloud atau biaya. [Syarat dan batasan](skills/motioncraft/references/gpu-cloud-render.md).
