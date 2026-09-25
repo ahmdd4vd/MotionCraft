@@ -11,10 +11,12 @@ import {storyboard, preview, cache3d} from './lib/phase1.mjs';
 import {autoCues,moodOptions,mixReview} from './lib/phase2.mjs';
 import {templatePlan} from './lib/templates.mjs';
 import {timelineEditor,timelineInit} from './lib/timeline-editor.mjs';
+import {checkUpdate} from './lib/check-update.mjs';
 import {gpuPreflight,workerManifest,workerVerify} from './lib/render-worker.mjs';
 
 const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
 
+  check-update                         compare installed SKILL.md version with latest GitHub release
   doctor [--quick]                     check the machine; never installs (prints a table)
   new <folder> [--style pi-v2] [--format 1:1|4:5|9:16] [--platform ig-feed|reels|tiktok] [--handle @you]   copy the Remotion template
   style list | check [tokens.json] | knobs [tokens.json] --energy 0-1 --density 0-1 --warmth 0-1 --roundness 0-1 --depth 0-1 --camera still|smooth|active
@@ -44,6 +46,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
 const [cmd, ...rest] = process.argv.slice(2); const a = parseArgs(rest);
 try {
   switch (cmd) {
+    case 'check-update': out(await checkUpdate()); break;
     case 'doctor': { const r = doctor(a); if (a.json) out(r); else console.log(printDoctor(r)); break; }
     case 'new': out(C.cmdNew(a)); break;
     case 'style': out(cmdStyle(a)); break;
