@@ -4,7 +4,7 @@ description: Make clean, high-taste motion graphics videos (explainers, product 
 license: MIT
 compatibility: Needs Node.js 18+ and Remotion (installed per project). ffmpeg is bundled through Remotion. Optional - Python 3 (faster-whisper for word timings, librosa for better audio analysis), yt-dlp, tesseract.
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   author: ahmdd4vd
 ---
 
