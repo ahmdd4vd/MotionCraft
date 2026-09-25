@@ -4,7 +4,7 @@
 
 **Bikin video motion graphics yang rapi dan berkelas, dikerjain AI agent kamu pakai Remotion.**
 
-Kasih agent kamu satu topik (atau video yang kamu suka). Dia riset, nulis naskah, nyamain tiap kata sama suara, bikin musik dan sound effect sendiri, nyusun videonya, ngecek tiap frame biar gak ada teks tabrakan, terus render.
+Kasih agent kamu satu topik (atau video yang kamu suka). Dia riset, nulis naskah, nyamain tiap kata sama suara, bikin musik dan sound effect sendiri, nyusun videonya, ngecek pixel video akhir dan audionya, terus render.
 
 ```bash
 npx skills add ahmdd4vd/motioncraft
@@ -38,12 +38,15 @@ Klik preview-nya buat nonton video lengkap pakai suara.
 | **Musik original** | 7 preset musik instrumental yang dibikin langsung di laptop kamu, gak ada urusan lisensi. Ada pengaman biar tiap video gak kedengeran sama. |
 | **Sound design** | 16 sound effect dalam 5 pack, nempel ke beat, di-mix ke -14 LUFS. |
 | **Template Remotion** | Headline, kartu UI, checklist, counter, step card, bentuk 3D beneran, maskot, end card. |
-| **QA otomatis** | Ngecek tiap frame: teks tabrakan, kartu numpuk, teks kepinggiran, plus loudness dan ukuran file. |
+| **QA jujur** | Cek overlap kotak debug dan sampel frame dari video akhir: contact sheet, tanda teks kecil di HP, area UI 9:16, area headline, dan font. Sampelnya petunjuk review, bukan bukti semua frame bebas tabrakan. |
 | **Siap dibagiin** | Preset render buat WhatsApp (di bawah 16 MB), Instagram, YouTube, dan file master. |
 
-## Review lebih cepat (v0.2 fase 1)
+## Baru di v0.2
 
-Brief bisa jadi storyboard dengan durasi per scene, lalu still asli tiap scene dan contact sheet sebelum render penuh. 3D yang berat bisa disimpan jadi rangkaian frame supaya revisi teks/audio tidak mengulang WebGL. Ini alur perencanaan dan render, bukan penulis naskah otomatis. Lihat [panduan fase 1](skills/motioncraft/references/phase1-planning-and-preview.md).
+- **Storyboard dan preview cepat.** `storyboard` mengubah brief jadi rentang frame per scene dan kerangka naskah buat direview. Setelah scene dibangun, `preview` bikin still asli dan contact sheet. `cache3d` menyimpan frame 3D yang berat, jadi revisi teks/audio tidak perlu render WebGL ulang. Naskah tetap harus ditulis dan di-approve. [Panduan perencanaan](skills/motioncraft/references/phase1-planning-and-preview.md).
+- **Audio dari timeline.** Tandai event scene seperti ketikan, klik, transisi, logo dan CTA, lalu `sfx auto` memasang cue yang hemat dan tepat waktu. `music moods` membantu pilih preset instrumental per video; `mix --duration` memotong musik sesuai panjang video dengan fade. Dengarkan mix dan jalankan `mix review --approve` sebelum render dengan audio. Event berasal dari anotasi brief, bukan deteksi visual otomatis. [Panduan audio](skills/motioncraft/references/phase2-timeline-audio.md).
+- **QA pixel akhir.** `qa pixels` mengambil sampel dari video yang sudah diekspor: frame ukuran asli, contact sheet dan tanda teks terlalu kecil di HP, zona UI aplikasi 9:16, area headline yang ramai, serta impor font. Buka frame aslinya, tonton video penuh dan dengarkan audio: sampel ini maupun `qa overlap` tidak menjamin nol tabrakan. [Panduan QA pixel](skills/motioncraft/references/phase3-pixel-review.md).
+- **Dua template pi-v2.** `ProductLaunch` (30-60 detik) menyusun masalah → demo asli → fitur terverifikasi → CTA. `ScreenTutorial` (30-90 detik vertikal) punya focus zoom, pointer highlight dan caption di bawah panel rekaman. Keduanya menampilkan placeholder DO NOT PUBLISH sampai rekaman asli dan kredit sumber dimasukkan; `template launch|tutorial` memvalidasi props dan file frame, bukan keaslian atau lisensi. [Panduan template](skills/motioncraft/references/phase4-templates.md).
 
 ## Install
 
@@ -72,9 +75,14 @@ Semua yang dikerjain skill ini juga bisa dijalanin manual:
 ```bash
 node skills/motioncraft/scripts/motioncraft.mjs doctor               # cek laptop kamu
 node skills/motioncraft/scripts/motioncraft.mjs new my-video --style pi-v2
-node skills/motioncraft/scripts/motioncraft.mjs music make --preset dreamy --duration 52 --drop 12.9
-node skills/motioncraft/scripts/motioncraft.mjs qa overlap --comp Main
+node skills/motioncraft/scripts/motioncraft.mjs storyboard --brief brief.json --out storyboard.json
+node skills/motioncraft/scripts/motioncraft.mjs preview --dir my-video --board storyboard.json --comp Main
+node skills/motioncraft/scripts/motioncraft.mjs sfx auto --board storyboard.json --out audio/auto-cues.json
+node skills/motioncraft/scripts/motioncraft.mjs music moods --mood premium
+node skills/motioncraft/scripts/motioncraft.mjs mix --music audio/music.wav --sfx audio/sfx.wav --duration 52 --out audio/final.wav
+node skills/motioncraft/scripts/motioncraft.mjs mix review --file audio/final.wav --approve  # setelah didengarkan
 node skills/motioncraft/scripts/motioncraft.mjs render --preset wa --audio audio/final.wav
+node skills/motioncraft/scripts/motioncraft.mjs qa pixels out/final.mp4 --board storyboard.json --dir .
 ```
 
 Jalanin `... help` buat liat semua command.

@@ -4,7 +4,7 @@
 
 **Clean, high-taste motion graphics videos, made by your AI agent with Remotion.**
 
-Give your agent a topic (or a video you like). It researches, writes the script, times every word to the voice, makes original music and sound effects, builds the video, checks every frame for overlapping text, and renders.
+Give your agent a topic (or a video you like). It researches, writes the script, times every word to the voice, makes original music and sound effects, builds the video, checks the exported pixels and audio, and renders.
 
 ```bash
 npx skills add ahmdd4vd/motioncraft
@@ -38,12 +38,15 @@ Click a preview to watch the full video with sound.
 | **Original music** | 7 instrumental presets synthesized on your machine, no licensing. A variety guard stops every video from sounding the same. |
 | **Sound design** | 16 synthesized sound effects in 5 packs, snapped to the beat, mixed to -14 LUFS. |
 | **Remotion template** | Headlines, UI cards, checklists, counters, step cards, real 3D shapes, mascot, end card. |
-| **Automatic QA** | Scans every frame for overlapping text, stacked cards and text in the margins, plus loudness and file-size checks. |
+| **Honest QA** | Debug-box overlap checks plus samples from the final export: contact sheets, phone-size text and 9:16 UI-zone flags, headline-area and font checks. Samples are review leads, not proof every frame is clear. |
 | **Ready to share** | Render presets for WhatsApp (under 16 MB), Instagram, YouTube and a master file. |
 
-## Faster review (v0.2 phase 1)
+## New in v0.2
 
-A brief can produce a timed storyboard for approval, then one real still per scene and a contact sheet before a full render. Expensive 3D can be cached as image frames for text/audio revisions. This is a planning and render workflow, not automatic scriptwriting. See the [phase 1 guide](skills/motioncraft/references/phase1-planning-and-preview.md).
+- **Storyboard and quick preview.** `storyboard` turns a brief into exact scene frame ranges and a copy-review scaffold. After you build the scenes, `preview` renders real stills and a contact sheet. `cache3d` stores expensive 3D frames so text/audio edits do not rerender WebGL. This does not write or approve the script for you. [Planning guide](skills/motioncraft/references/phase1-planning-and-preview.md).
+- **Timeline audio.** Annotate scene events such as typing, clicks, transitions, logo reveal and CTA, then use `sfx auto` for sparse timed cues. `music moods` helps pick an instrumental preset per video; `mix --duration` makes the final bed match the video length with a fade. Listen to the mix and use `mix review --approve` before rendering with audio. Events come from the brief, not visual detection. [Audio guide](skills/motioncraft/references/phase2-timeline-audio.md).
+- **Final-pixel QA.** `qa pixels` samples the exported video and writes full-size frames, a contact sheet and review flags for tiny phone text, 9:16 app UI zones, crowded headline areas and font imports. Open the actual frames, watch the whole video and listen to its audio: neither this sample nor `qa overlap` certifies zero collisions. [Pixel QA guide](skills/motioncraft/references/phase3-pixel-review.md).
+- **Two pi-v2 templates.** `ProductLaunch` (30-60 s) lays out problem → real demo → verified features → CTA. `ScreenTutorial` (30-90 s vertical) adds focus zoom, pointer highlight and captions below the recording panel. Both show DO NOT PUBLISH placeholders until real captures and source credits are added; `template launch|tutorial` validates props and frame files, not authenticity or licenses. [Template guide](skills/motioncraft/references/phase4-templates.md).
 
 ## Install
 
@@ -72,9 +75,14 @@ Everything the skill does is also a plain command:
 ```bash
 node skills/motioncraft/scripts/motioncraft.mjs doctor               # check your machine
 node skills/motioncraft/scripts/motioncraft.mjs new my-video --style pi-v2
-node skills/motioncraft/scripts/motioncraft.mjs music make --preset dreamy --duration 52 --drop 12.9
-node skills/motioncraft/scripts/motioncraft.mjs qa overlap --comp Main
+node skills/motioncraft/scripts/motioncraft.mjs storyboard --brief brief.json --out storyboard.json
+node skills/motioncraft/scripts/motioncraft.mjs preview --dir my-video --board storyboard.json --comp Main
+node skills/motioncraft/scripts/motioncraft.mjs sfx auto --board storyboard.json --out audio/auto-cues.json
+node skills/motioncraft/scripts/motioncraft.mjs music moods --mood premium
+node skills/motioncraft/scripts/motioncraft.mjs mix --music audio/music.wav --sfx audio/sfx.wav --duration 52 --out audio/final.wav
+node skills/motioncraft/scripts/motioncraft.mjs mix review --file audio/final.wav --approve  # after listening
 node skills/motioncraft/scripts/motioncraft.mjs render --preset wa --audio audio/final.wav
+node skills/motioncraft/scripts/motioncraft.mjs qa pixels out/final.mp4 --board storyboard.json --dir .
 ```
 
 Run `... help` for the full list.
