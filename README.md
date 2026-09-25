@@ -41,7 +41,7 @@ Click a preview to watch the full video with sound.
 | **Honest QA** | Debug-box overlap checks plus samples from the final export: contact sheets, phone-size text and 9:16 UI-zone flags, headline-area and font checks. Samples are review leads, not proof every frame is clear. |
 | **Ready to share** | Render presets for WhatsApp (under 16 MB), Instagram, YouTube and a master file. |
 
-## New in v0.2
+## New in v0.3
 
 - **Storyboard and quick preview.** `storyboard` turns a brief into exact scene frame ranges and a copy-review scaffold. After you build the scenes, `preview` renders real stills and a contact sheet. `cache3d` stores expensive 3D frames so text/audio edits do not rerender WebGL. This does not write or approve the script for you. [Planning guide](skills/motioncraft/references/phase1-planning-and-preview.md).
 - **Timeline audio.** Annotate scene events such as typing, clicks, transitions, logo reveal and CTA, then use `sfx auto` for sparse timed cues. `music moods` helps pick an instrumental preset per video; `mix --duration` makes the final bed match the video length with a fade. Listen to the mix and use `mix review --approve` before rendering with audio. Events come from the brief, not visual detection. [Audio guide](skills/motioncraft/references/phase2-timeline-audio.md).
