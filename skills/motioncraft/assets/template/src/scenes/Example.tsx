@@ -7,7 +7,8 @@ import {Strike, Card, Pill, CheckItem, StepCards, Callout, Credit, Counter} from
 import {FloatingShapes} from '../components/Three';
 import {EndCard} from '../components/EndCard';
 import {sec} from '../lib/anim';
-import {nearestBeatFrame, beatAccent} from '../lib/beat';
+import {nearestBeatFrame} from '../lib/beat';
+import {MorphTransition} from '../components/MorphTransition';
 import {FormatCtx, Format, Platform} from '../lib/format-context';
 import {geometry} from '../lib/format.mjs';
 import {DebugCtx} from '../lib/debug';
@@ -23,7 +24,7 @@ export const Main: React.FC<MainProps> = ({handle, audio, beats = [], mcDebug = 
       <Camera keys={[[0, 1.04, 0, 0], [sec(4), 1, 0, 0], [sec(9), 1.03, 0, -6], [sec(12), 1, 0, 0]]}>
         {/* 1. Hook: 3D objects + short line */}
         <Scene from={0} to={sec(3.4)} noIn>
-          {!mcDebug && <AbsoluteFill style={{opacity: 0.9}}><FloatingShapes at={nearestBeatFrame(0, beats)} /></AbsoluteFill>}
+          {!mcDebug && <AbsoluteFill style={{opacity: 0.9}}><FloatingShapes at={nearestBeatFrame(0, beats)} beats={beats} /></AbsoluteFill>}
           <Center><Headline level="h1" items={words('Make videos like *this.*', nearestBeatFrame(8, beats))} /></Center>
         </Scene>
         {/* 2. Reframe: "Not X. Y." */}
@@ -66,6 +67,9 @@ export const Main: React.FC<MainProps> = ({handle, audio, beats = [], mcDebug = 
           <EndCard at={sec(17.8)} handle={handle} line="Follow for more" />
         </Scene>
       </Camera>
+      <MorphTransition at={sec(3.4)-11}
+        from={{x:.86,y:.24,size:170,points:[[0,-1],[1,0],[0,1],[-1,0]],color:undefined}}
+        to={{x:.76,y:.72,size:110,points:[[-1,-1],[1,-1],[1,1],[-1,1]],color:undefined}} />
       {audio && !mcDebug && <Audio src={staticFile(audio)} />}
     </AbsoluteFill>
   </DebugCtx.Provider></FormatCtx.Provider>;

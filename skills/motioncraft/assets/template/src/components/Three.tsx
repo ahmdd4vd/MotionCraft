@@ -9,6 +9,7 @@ import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
 import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import {S} from '../lib/tokens';
 import {cl, spr} from '../lib/anim';
+import {beatAccent} from '../lib/beat';
 const L = S.three;
 
 const Env: React.FC = () => { const {gl, scene} = useThree(); useEffect(() => { gl.outputColorSpace = THREE.SRGBColorSpace; gl.toneMapping = THREE.NoToneMapping; const pm = new THREE.PMREMGenerator(gl); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; }, [gl, scene]); return null; };
@@ -86,7 +87,7 @@ export const Mascot: React.FC<{at: number; size?: number; happy?: boolean; camer
 };
 
 // Field of soft pastel objects floating in (hook/opening). Deterministic positions.
-export const FloatingShapes: React.FC<{at: number; count?: number; w?: number; h?: number; clearX?: number; clearY?: number; cameraMove?: Camera3DKey[]; finishes?: Finish[]}> = ({at, count = 14, w = 1920, h = 1080, clearX = 950, clearY = 430, cameraMove, finishes = ['ceramic', 'metal', 'glass']}) => {
+export const FloatingShapes: React.FC<{at: number; count?: number; w?: number; h?: number; clearX?: number; clearY?: number; cameraMove?: Camera3DKey[]; finishes?: Finish[]; beats?: number[]}> = ({at, count = 14, w = 1920, h = 1080, clearX = 950, clearY = 430, cameraMove, finishes = ['ceramic', 'metal', 'glass'], beats = []}) => {
   const f = useCurrentFrame(); const cols = S.color.object3d;
   // Objects stay OUT of the central text area (ellipse clearX x clearY) so they never sit on the headline.
   const items = useMemo(() => Array.from({length: count}, (_, i) => { const a = (i * 137.5) * Math.PI / 180, r = 1 + (i % 4) * 0.28;
@@ -96,7 +97,7 @@ export const FloatingShapes: React.FC<{at: number; count?: number; w?: number; h
     <Lights /><Camera3D keys={cameraKeys(1800, at, cameraMove)} />
     {items.map((it, i) => { const s = spr(f, at + it.d, {damping: 12, stiffness: 90, mass: 1}); const t = (f - at) / 30;
       const finish = finishes[i % finishes.length] ?? 'ceramic';
-      return <group key={i} position={[it.x, it.y + Math.sin(t + i) * 18, it.z]} rotation={[t * 0.3 + i, t * 0.4 + i * 0.5, 0]} scale={s}>
+      return <group key={i} position={[it.x, it.y + Math.sin(t + i) * 18, it.z]} rotation={[t * 0.3 + i, t * 0.4 + i * 0.5, 0]} scale={s * beatAccent(f, beats)}>
         {it.kind === 0 && <mesh geometry={rb} castShadow receiveShadow><Mat color={it.c} finish={finish} /></mesh>}
         {it.kind === 1 && <mesh castShadow receiveShadow><torusGeometry args={[70, 30, 32, 64]} /><Mat color={it.c} finish={finish} /></mesh>}
         {it.kind === 2 && <mesh castShadow receiveShadow><capsuleGeometry args={[40, 90, 12, 24]} /><Mat color={it.c} finish={finish} /></mesh>}
