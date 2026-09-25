@@ -96,6 +96,10 @@ node <skill-dir>/scripts/motioncraft.mjs storyboard --brief brief.json --out sto
 node <skill-dir>/scripts/motioncraft.mjs preview --dir my-video --board storyboard.json --comp Main --scale 0.35
 ```
 
+## Phase 4 - Project templates
+
+`new` now includes `ProductLaunch` and `ScreenTutorial` compositions on pi-v2. The launch template stages a problem, real frame-based demo, verified feature cards and CTA; the vertical tutorial uses a focus zoom and pointer highlight while captions stay below the capture panel. Both show a prominent blocker until real footage and source credit are supplied. Validate props and numbered JPGs with `template launch|tutorial --spec <file> --dir .`; then inspect rendered frames, the entire exported video and audio. Usage and limits: [references/phase4-templates.md](references/phase4-templates.md).
+
 ## Step 5 - Voiceover and timing
 
 ```bash

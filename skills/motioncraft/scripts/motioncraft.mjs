@@ -9,6 +9,7 @@ import { cmdRender } from './lib/render.mjs';
 import { cmdStyle } from './lib/style.mjs';
 import {storyboard, preview, cache3d} from './lib/phase1.mjs';
 import {autoCues,moodOptions,mixReview} from './lib/phase2.mjs';
+import {templatePlan} from './lib/templates.mjs';
 
 const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
 
@@ -24,6 +25,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--duration 52] [--out audio/final.wav]
   beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
   timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
+  template launch|tutorial --spec props.json [--dir project] [--duration 45] (validate real frames)
   storyboard --brief brief.json [--out storyboard.json] [--md storyboard.md]
   preview --board storyboard.json [--comp Main] [--scale 0.35] [--out out/preview-stills]
   sfx auto --board storyboard.json [--maxPerMin 24] [--out audio/auto-cues.json]
@@ -49,6 +51,7 @@ try {
     case 'timeline': out(C.cmdTimeline(a)); break;
     case 'render': out(cmdRender(a)); break;
     case 'storyboard': out(storyboard(a)); break;
+    case 'template': out(templatePlan(a)); break;
     case 'preview': out(preview(a)); break;
     case 'cache3d': out(cache3d(a)); break;
     case 'qa': { const s = a._[0], f = a._[1];
