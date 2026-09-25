@@ -1,6 +1,5 @@
 import {FPS, S} from './tokens';
 
-
 // Beats are seconds in the existing music beatgrid/timeline. Never invent a beat
 // when none was supplied. The per-style window keeps VO-led words from drifting.
 export const nearestBeatFrame = (frame: number, beats: number[], maxMs = S.motion.beat.snapMs) => {

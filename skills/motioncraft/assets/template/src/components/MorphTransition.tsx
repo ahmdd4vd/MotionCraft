@@ -17,11 +17,12 @@ export const MorphTransition:React.FC<{at:number;from:MorphShape;to:MorphShape;d
   if(dbg||f<at-holdBefore||f>at+duration+holdAfter)return null;
   const p=interpolate(f,[at,at+duration],[0,1],{...cl,easing:easeInOut});
   const shape=morphShapeAt(from,to,p);const radius=shape.size*0.5;
+  const fadeIn = holdBefore > 0 ? Math.min(1, (f-(at-holdBefore))/Math.min(10,holdBefore)) : 1;
   const fadeOut = holdAfter > 0 ? Math.min(1, (at+duration+holdAfter-f)/Math.min(10,holdAfter)) : 1;
   const pts=shape.points.map(([x,y])=>`${(shape.x*width+x*radius).toFixed(1)},${(shape.y*height+y*radius).toFixed(1)}`).join(' ');
   // Overlay is decorative and pointer-free. Its vertices are real interpolated
   // geometry; avoid covering text by choosing positions outside safe zones.
   return <svg aria-hidden="true" style={{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',overflow:'visible'}} viewBox={`0 0 ${width} ${height}`}>
-    <polygon points={pts} fill={shape.color??C.accent} opacity={(holdBefore||holdAfter ? S.motion.morph.opacity * fadeOut : Math.sin(Math.PI*p)*S.motion.morph.opacity)}/>
+    <polygon points={pts} fill={shape.color??C.accent} opacity={(holdBefore||holdAfter ? S.motion.morph.opacity * fadeIn * fadeOut : Math.sin(Math.PI*p)*S.motion.morph.opacity)}/>
   </svg>;
 };
