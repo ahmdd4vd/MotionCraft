@@ -33,7 +33,7 @@ export function retimeBoard(board, edits) {
 export function shiftBeatGrid(grid, offset, duration) {
  const n=Number(offset);if(!Number.isFinite(n)||Math.abs(n)>60)throw Error('beat offset must be between -60 and 60 seconds');
  const shift=a=>a.map(t=>+(Number(t)+n).toFixed(3)).filter(t=>Number.isFinite(t)&&t>=0&&t<duration);
- return {...grid,duration,beats:shift(grid.beats||[]),sections:Array.isArray(grid.sections)?grid.sections.map(s=>typeof s==='number'?+(s+n).toFixed(3):{...s,t:s.t==null?s.t:+(Number(s.t)+n).toFixed(3)}):grid.sections};
+ return {...grid,duration,beatOffset:n,beats:shift(grid.beats||[]),sections:Array.isArray(grid.sections)?grid.sections.map(s=>typeof s==='number'?+(s+n).toFixed(3):{...s,t:s.t==null?s.t:+(Number(s.t)+n).toFixed(3)}):grid.sections};
 }
 export function timelineEditor(a){
  const source=path.resolve(a.board||'storyboard.json'),board=readJson(source);
@@ -47,9 +47,9 @@ export function timelineEditor(a){
  :root{font-family:system-ui,sans-serif;color:#e8edf7;background:#111827}body{max-width:900px;margin:35px auto;padding:0 20px}h1{font-size:28px}p{color:#aab8ce;line-height:1.5}.row{display:flex;align-items:center;gap:14px;background:#243247;border:1px solid #465a76;padding:14px;margin:8px 0;border-radius:10px}.row.dragging{opacity:.45}.handle{cursor:grab;font-size:25px}.name{flex:1}.name small{display:block;color:#aab8ce}input{width:72px;padding:7px;background:#111827;color:white;border:1px solid #789;border-radius:5px}button{padding:10px 14px;margin:8px 8px 8px 0;background:#72bcf5;color:#102033;border:0;border-radius:6px;font-weight:700;cursor:pointer}button:focus,input:focus{outline:2px solid #ffa86c}#error{color:#ffaaa0}code{color:#b3dafa}</style>
  <h1>MotionCraft timeline editor</h1><p>Drag scenes to reorder. Change each duration in seconds. Shift the beat grid by a signed offset. Export both files, then review the updated storyboard against your Remotion composition before rendering. The TimelineLaunch and TimelineTutorial compositions render this exported timing plan without code edits.</p>
  <main id="list"></main><label>Beat offset (seconds) <input id="beat" type="number" step="0.01" value="0"></label><p id="summary"></p><p id="error" role="alert"></p><button id="export">Export storyboard and beat grid</button>
- <p>Render with <code>--comp TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json</code>. Rebuild SFX and review footage, VO and music.</p><script type="application/json" id="data">${data}</script><script>${script.replace(/<\/script/gi,'<\\/script')}</script></html>`;
+ <p>Render with <code>--comp TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json</code>. Run timeline audio with original and edited boards; re-mix and review audio and footage.</p><script type="application/json" id="data">${data}</script><script>${script.replace(/<\/script/gi,'<\\/script')}</script></html>`;
  const dest=path.resolve(a.out||'timeline-editor.html');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,html);
- return {editor:dest,scenes:board.scenes.length,note:'Open the HTML locally in a browser. Export JSON and render TimelineLaunch or TimelineTutorial with --timeline. Independently timed media/VO/music must be reviewed and revised.'};
+ return {editor:dest,scenes:board.scenes.length,note:'Open the HTML locally in a browser. Export JSON and render TimelineLaunch or TimelineTutorial with --timeline. Run timeline audio for scene-synced media and review cuts; other footage needs independent sync review.'};
 }
 
 const presets={

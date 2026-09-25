@@ -46,9 +46,15 @@ Open the local HTML. Drag scenes or use arrow buttons, change each duration, and
 node <skill-dir>/scripts/motioncraft.mjs render --dir my-video --comp TimelineLaunch --timeline storyboard.edited.json --grid beatgrid.edited.json --props launch-props.json --out out/edited.mp4
 ```
 
-For tutorials, use `timeline init tutorial` and `--comp TimelineTutorial`. Timeline-aware compositions have built-in `problem`, `demo`, `features`, `cta` launch roles and `intro`, `step`, `outro` tutorial roles. Edit headlines in the JSON. Product copy and real media paths come from props. Sequence windows move actual content blocks; the visible beat marker pulses at shifted beat times. Rerun `sfx auto` with the edited board, make a new mix and review it.
+For tutorials, use `timeline init tutorial` and `--comp TimelineTutorial`. Timeline-aware compositions have built-in `problem`, `demo`, `features`, `cta` launch roles and `intro`, `step`, `outro` tutorial roles. Edit headlines in the JSON. Product copy and real media paths come from props. Sequence windows move actual content blocks; the visible beat marker pulses at shifted beat times. Retime scene-aligned music and VO from the same original timing plan, including beat offset for music:
 
-**Limits:** The existing `ProductLaunch`, `ScreenTutorial`, and `Main` compositions remain hand-coded and do not consume this editor's plan. Footage frames advance from each scene's local start: moving or stretching a scene does not intelligently cut or resample source recordings. VO and music are not time-stretched. Shifting beat-grid markers does not move music. Independently synced media, VO, music and external events need separate review and adjustment. Inspect the final rendered pixels and audio; placeholder demo/capture panels are not publishable.
+```bash
+node <skill-dir>/scripts/motioncraft.mjs timeline audio --original timeline-launch.json --edited storyboard.edited.json --grid beatgrid.edited.json --music audio/music.wav --vo audio/vo.wav --outDir audio/retimed
+```
+
+Rerun `sfx auto` with the edited board, mix with `audio/retimed/music.wav` and `audio/retimed/vo.wav`, listen to the joins and stretched speech, and approve a fresh mix review before `render --audio`. Beat offset moves the music but not VO. Both inputs must span the original board duration; a shorter VO needs intentional padding before this step. These files are not applied by `render` automatically.
+
+**Limits:** The existing `ProductLaunch`, `ScreenTutorial`, and `Main` compositions remain hand-coded and do not consume this editor's plan. Footage frames advance from each scene's local start: moving or stretching a scene does not intelligently cut or resample source recordings. The audio command stretches and reorders scene-aligned VO/music, but cannot infer free-running narration or footage sync; it does not preserve pitch perfectly at large stretches. Independently synced media, VO, music and external events need separate review and adjustment. Inspect the final rendered pixels and audio; placeholder demo/capture panels are not publishable.
 
 ## Cache heavy 3D once
 

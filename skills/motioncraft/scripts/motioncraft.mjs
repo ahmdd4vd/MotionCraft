@@ -11,6 +11,7 @@ import {storyboard, preview, cache3d} from './lib/phase1.mjs';
 import {autoCues,moodOptions,mixReview} from './lib/phase2.mjs';
 import {templatePlan} from './lib/templates.mjs';
 import {timelineEditor,timelineInit} from './lib/timeline-editor.mjs';
+import {retimeAudio} from './lib/retime-audio.mjs';
 import {checkUpdate} from './lib/check-update.mjs';
 import {gpuPreflight,workerManifest,workerVerify} from './lib/render-worker.mjs';
 
@@ -30,6 +31,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
   timeline init launch|tutorial [--out timeline-launch.json]
   timeline edit --board storyboard.json [--grid audio/beatgrid.json] [--out timeline-editor.html]
+  timeline audio --original original.json --edited storyboard.edited.json [--grid beatgrid.edited.json] --music music.wav [--vo vo.wav] [--outDir audio/retimed]
   timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
   template launch|tutorial --spec props.json [--dir project] [--duration 45] (validate real frames)
   storyboard --brief brief.json [--out storyboard.json] [--md storyboard.md]
@@ -57,7 +59,7 @@ try {
     case 'sfx': out(a._[0]==='auto'?autoCues(a):C.cmdSfx({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
     case 'mix': out(a._[0]==='review'?mixReview(a):C.cmdMix(a)); break;
     case 'beat': out(C.cmdBeat(a)); break;
-    case 'timeline': out(a._[0]==='edit'?timelineEditor(a):a._[0]==='init'?timelineInit(a):C.cmdTimeline(a)); break;
+    case 'timeline': out(a._[0]==='edit'?timelineEditor(a):a._[0]==='init'?timelineInit(a):a._[0]==='audio'?retimeAudio(a):C.cmdTimeline(a)); break;
     case 'render': out(cmdRender(a)); break;
     case 'gpu': out(gpuPreflight(a)); break;
     case 'worker': out(a._[0]==='manifest'?workerManifest(a):a._[0]==='verify'?workerVerify(a):die('worker manifest|verify')); break;

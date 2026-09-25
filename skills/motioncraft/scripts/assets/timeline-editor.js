@@ -18,7 +18,7 @@ document.getElementById('export').onclick=()=>{try{
  const remap=e=>{const out={...e};for(const key of ['at','t'])if(e[key]!=null)out[key]=shift(e[key]);if(e.frame!=null)out.frame=Math.round(shift(Number(e.frame)/fps)*fps);return out};
  const ratio=(s.previewFrame-s.fromFrame)/(s.toFrame-s.fromFrame);const out={...s,fromFrame:frame,toFrame:frame+frames,start:+(frame/fps).toFixed(3),end:+((frame+frames)/fps).toFixed(3),previewFrame:frame+Math.min(frames-1,Math.max(0,Math.round((Number.isFinite(ratio)?ratio:.7)*frames)))};
  if(Array.isArray(s.events))out.events=s.events.map(remap);if(Array.isArray(s.animations))out.animations=s.animations.map(remap);frame+=frames;return out});
- const length=+(frame/fps).toFixed(3);download('storyboard.edited.json',{...board,duration:length,scenes:edited});if(grid){const shift=t=>+(Number(t)+offset).toFixed(3);download('beatgrid.edited.json',{...grid,duration:length,beats:(grid.beats||[]).map(shift).filter(t=>Number.isFinite(t)&&t>=0&&t<length),sections:Array.isArray(grid.sections)?grid.sections.map(s=>typeof s==='number'?shift(s):{...s,t:s.t==null?s.t:shift(s.t)}):grid.sections})}
- error.textContent='Exported. Render TimelineLaunch or TimelineTutorial with --timeline; retime independent media/VO/music and review before publishing.';
+ const length=+(frame/fps).toFixed(3);download('storyboard.edited.json',{...board,duration:length,scenes:edited});if(grid){const shift=t=>+(Number(t)+offset).toFixed(3);download('beatgrid.edited.json',{...grid,duration:length,beatOffset:offset,beats:(grid.beats||[]).map(shift).filter(t=>Number.isFinite(t)&&t>=0&&t<length),sections:Array.isArray(grid.sections)?grid.sections.map(s=>typeof s==='number'?shift(s):{...s,t:s.t==null?s.t:shift(s.t)}):grid.sections})}
+ error.textContent='Exported. Run timeline audio with the original and edited boards, then re-mix and review audio before rendering.';
  }catch(e){error.textContent=e.message}};
 draw();
