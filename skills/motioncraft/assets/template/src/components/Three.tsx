@@ -35,6 +35,11 @@ export const DepthOfField:React.FC<{enabled?:boolean}> = ({enabled = L.depthOfFi
     const c = new EffectComposer(gl);
     c.addPass(new RenderPass(scene, camera));
     const b = new BokehPass(scene, camera, {focus:config.focus, aperture:config.aperture, maxblur:config.maxBlur});
+    // Three's stock shader forces output alpha to 1, which turns every
+    // transparent 3D canvas into a black rectangle over the DOM. Keep sampled
+    // alpha so the transparent canvas can be composited normally.
+    b.materialBokeh.fragmentShader=b.materialBokeh.fragmentShader.replace('gl_FragColor.a = 1.0;', 'gl_FragColor.a = col.a / 41.0;');
+    b.materialBokeh.needsUpdate=true;
     b.renderToScreen = true;c.addPass(b);
     return c;
   }, [gl, scene, camera, enabled]);
