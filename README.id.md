@@ -41,7 +41,7 @@ Klik preview-nya buat nonton video lengkap pakai suara.
 | **QA jujur** | Cek overlap kotak debug dan sampel frame dari video akhir: contact sheet, tanda teks kecil di HP, area UI 9:16, area headline, dan font. Sampelnya petunjuk review, bukan bukti semua frame bebas tabrakan. |
 | **Siap dibagiin** | Preset render buat WhatsApp (di bawah 16 MB), Instagram, YouTube, dan file master. |
 
-## Baru di v0.3
+## Baru di v0.4
 
 - **Storyboard dan preview cepat.** `storyboard` mengubah brief jadi rentang frame per scene dan kerangka naskah buat direview. Setelah scene dibangun, `preview` bikin still asli dan contact sheet. `cache3d` menyimpan frame 3D yang berat, jadi revisi teks/audio tidak perlu render WebGL ulang. Naskah tetap harus ditulis dan di-approve. [Panduan perencanaan](skills/motioncraft/references/phase1-planning-and-preview.md).
 - **Audio dari timeline.** Tandai event scene seperti ketikan, klik, transisi, logo dan CTA, lalu `sfx auto` memasang cue yang hemat dan tepat waktu. `music moods` membantu pilih preset instrumental per video; `mix --duration` memotong musik sesuai panjang video dengan fade. Dengarkan mix dan jalankan `mix review --approve` sebelum render dengan audio. Event berasal dari anotasi brief, bukan deteksi visual otomatis. [Panduan audio](skills/motioncraft/references/phase2-timeline-audio.md).
