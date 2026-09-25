@@ -1,6 +1,6 @@
 <div align="center">
 
-# motioncraft
+<img src="media/motioncraft-logo.png" alt="MotionCraft logo" width="640">
 
 **Clean, high-taste motion graphics videos, made by your AI agent with Remotion.**
 

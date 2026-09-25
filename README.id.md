@@ -1,6 +1,6 @@
 <div align="center">
 
-# motioncraft
+<img src="media/motioncraft-logo.png" alt="MotionCraft logo" width="640">
 
 **Bikin video motion graphics yang rapi dan berkelas, dikerjain AI agent kamu pakai Remotion.**
 
