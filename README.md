@@ -103,3 +103,7 @@ skills/motioncraft/
 MIT - see [LICENSE](LICENSE). Remotion has its own license: free for individuals and small companies, a company license for larger teams. See [remotion.dev/license](https://www.remotion.dev/license).
 
 Credits for the showcase topics and tools: [CREDITS.md](CREDITS.md).
+
+## Social output: 1:1, 4:5, 9:16
+
+One responsive Remotion composition can export three real canvas dimensions (1080x1080 IG feed, 1080x1350 IG feed, 1080x1920 TikTok), with repositioned text, hero, credits and end card rather than center-cropping. `render --all-formats` exports the three sizes; use `--format 9:16 --platform reels` for a separate Reels safe layout. See [social formats and caveats](skills/motioncraft/references/social-formats.md). Platform UI varies, so inspect each final export in its app before posting.

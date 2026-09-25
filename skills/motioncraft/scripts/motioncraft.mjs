@@ -14,7 +14,7 @@ import {templatePlan} from './lib/templates.mjs';
 const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
 
   doctor [--quick]                     check the machine; never installs (prints a table)
-  new <folder> [--style pi-v2] [--vertical] [--handle @you]   copy the Remotion template
+  new <folder> [--style pi-v2] [--format 1:1|4:5|9:16] [--platform ig-feed|reels|tiktok] [--handle @you]   copy the Remotion template
   style list | check [tokens.json] | knobs [tokens.json] --energy 0-1 --density 0-1 --warmth 0-1 --roundness 0-1 --depth 0-1 --camera still|smooth|active
   ref get <url|file> | scenes | frames [--every 0.5] | sheet | motion | colors | audio | text | report   [--dir ref]
   audio analyze <file> [--out a.json] [--full]      BPM, beats, onsets, key, LUFS, true peak, drop, silences
@@ -33,7 +33,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   mix review --file audio/final.wav [--cues audio/auto-cues.json] [--out out/mix-review]; after listening: --approve
   cache3d --comp LogoOnly --start 0 --end 89 --sources src/scenes/Logo.tsx,src/style.json [--scale 1]
   qa pixels <video> [--board storyboard.json] [--outDir out/qa-pixels] | overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
-  render [--review out/mix-review/review.json] [--comp Main] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
+  render [--review out/mix-review/review.json] [--comp Main] [--format 1:1|4:5|9:16] [--all-formats] [--platform ig-feed|reels|tiktok] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
 `;
 const [cmd, ...rest] = process.argv.slice(2); const a = parseArgs(rest);
 try {

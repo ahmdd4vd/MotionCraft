@@ -1,6 +1,9 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {S, C} from '../lib/tokens';
+import {useVideoConfig} from 'remotion';
+import {geometry} from '../lib/format.mjs';
+import {useFormat} from '../lib/format-context';
 import {cl, easeInOut} from '../lib/anim';
 import {useDebug} from '../lib/debug';
 
@@ -38,11 +41,12 @@ export const Camera: React.FC<{keys?: CamKey[]; children: React.ReactNode}> = ({
   return <AbsoluteFill style={{transform: `translate(${at(2) + dx}px, ${at(3) + dy}px) scale(${s})`, transformOrigin: '50% 50%'}}>{children}</AbsoluteFill>;
 };
 
-export const Center: React.FC<{children: React.ReactNode; style?: React.CSSProperties; gap?: number}> = ({children, style, gap = 40}) => (
-  <AbsoluteFill style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap, ...style}}>{children}</AbsoluteFill>
-);
+export const Center: React.FC<{children: React.ReactNode; style?: React.CSSProperties; gap?: number}> = ({children, style, gap = 40}) => {
+  const {format, platform} = useFormat(); const {width,height}=useVideoConfig(); const g=geometry(format,platform);
+  return <div style={{position:'absolute',left:g.safe.x,top:g.safe.y,width:Math.min(g.safe.width,width),height:Math.min(g.safe.height,height),display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap,...style}}>{children}</div>;
+};
 // Zones keep headline and hero from ever competing for space.
 export const Zone: React.FC<{name: 'top' | 'center' | 'bottom'; children: React.ReactNode; style?: React.CSSProperties}> = ({name, children, style}) => {
-  const [a, b] = S.layout.zones[name];
-  return <div style={{position: 'absolute', left: S.layout.safe.x, right: S.layout.safe.x, top: `${a * 100}%`, height: `${(b - a) * 100}%`, display: 'flex', alignItems: 'center', justifyContent: 'center', ...style}}>{children}</div>;
+  const {format,platform}=useFormat(); const g=geometry(format,platform); const [a,b]=g.zones[name];
+  return <div style={{position:'absolute',left:g.safe.x,width:g.safe.width,top:g.safe.y+a*g.safe.height,height:(b-a)*g.safe.height,display:'flex',alignItems:'center',justifyContent:'center',...style}}>{children}</div>;
 };

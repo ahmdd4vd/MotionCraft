@@ -1,6 +1,8 @@
 import React, {useMemo} from 'react';
 import {measureText} from '@remotion/layout-utils';
-import {S, FONT, W, SAFE} from '../lib/tokens';
+import {S, FONT} from '../lib/tokens';
+import {useFormat} from '../lib/format-context';
+import {geometry} from '../lib/format.mjs';
 import {Word, InlineIcon} from './Word';
 import {McBox} from '../lib/debug';
 
@@ -26,13 +28,14 @@ const layout = (items: Item[], size: number, weight: number, maxW: number) => {
 };
 
 export const Headline: React.FC<{items: Item[]; level?: Level; size?: number; out?: number; maxWidth?: number; align?: 'center' | 'left'; style?: React.CSSProperties; allowOverlap?: boolean}> =
-({items, level = 'h1', size, out, maxWidth = W - SAFE.x * 2, align = 'center', style, allowOverlap}) => {
-  const range = S.font.size[level]; const fs = size ?? range[1]; const weight = S.font.weights[level];
+({items, level = 'h1', size, out, maxWidth, align = 'center', style, allowOverlap}) => {
+  const {format,platform}=useFormat(); const g=geometry(format,platform); const maxW=Math.min(maxWidth ?? g.safe.width,g.safe.width);
+  const range=S.font.size[level]; const fs=(size ?? range[1]) * (g.width<1400 ? .78 : 1); const weight = S.font.weights[level];
   const lh = S.font.lineHeight[level];
-  const {lines, overflow} = useMemo(() => layout(items, fs, weight, maxWidth), [items, fs, weight, maxWidth]);
+  const {lines, overflow} = useMemo(() => layout(items, fs, weight, maxW), [items, fs, weight, maxW]);
   if (overflow) console.warn(`[motioncraft] headline too long for 2 lines at ${fs}px: shorten the text`);
   let idx = 0;
-  return <McBox kind="text" allowOverlap={allowOverlap} style={{display: 'flex', flexDirection: 'column', alignItems: align === 'center' ? 'center' : 'flex-start', maxWidth, ...style}}>
+  return <McBox kind="text" allowOverlap={allowOverlap} style={{display: 'flex', flexDirection: 'column', alignItems: align === 'center' ? 'center' : 'flex-start', maxWidth:maxW, ...style}}>
     {lines.map((line, li) => <div key={li} style={{display: 'flex', alignItems: 'center', height: fs * lh, justifyContent: align === 'center' ? 'center' : 'flex-start'}}>
       {line.map((it, k) => { const i = idx++; const o = out !== undefined ? out + i * S.motion.wordOut.stagger : undefined;
         const space = k > 0 && !line[k - 1].icon && !it.icon ? ' ' : '';

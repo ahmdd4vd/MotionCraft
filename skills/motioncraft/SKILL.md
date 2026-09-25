@@ -47,7 +47,7 @@ Get (or fill with sensible defaults and state them):
 
 - Topic and goal (teach, sell, announce, entertain)
 - Audience and language of the voiceover
-- Format: 16:9 (default), 9:16 (`--vertical`), or 1:1
+- Format: 16:9 (legacy default), 1:1, 4:5 or 9:16; choose ig-feed, reels or tiktok target. A single scene can render all three via `render --all-formats`.
 - Length (30-90 s is the sweet spot)
 - Style: `pi-v2` by default, or a reference video
 - Voice: user's own recording, a TTS voice, or text only
@@ -75,7 +75,7 @@ The report gives cut times, motion energy per second, the color palette, BPM / k
 ## Step 4 - Project
 
 ```bash
-node <skill-dir>/scripts/motioncraft.mjs new my-video --style pi-v2 --handle @user
+node <skill-dir>/scripts/motioncraft.mjs new my-video --style pi-v2 --format 9:16 --platform tiktok --handle @user
 cd my-video && npm install
 ```
 
@@ -100,6 +100,10 @@ node <skill-dir>/scripts/motioncraft.mjs preview --dir my-video --board storyboa
 ## Phase 4 - Project templates
 
 `new` now includes `ProductLaunch` and `ScreenTutorial` compositions on pi-v2. The launch template stages a problem, real frame-based demo, verified feature cards and CTA; the vertical tutorial uses a focus zoom and pointer highlight while captions stay below the capture panel. Both show a prominent blocker until real footage and source credit are supplied. Validate props and numbered JPGs with `template launch|tutorial --spec <file> --dir .`; then inspect rendered frames, the entire exported video and audio. Usage and limits: [references/phase4-templates.md](references/phase4-templates.md).
+
+## Social formats and safe layout
+
+The template uses responsive zones, headline widths, hero/card sizing, capture panel and end-card placement. Its Remotion metadata creates a **real** 1080x1080, 1080x1350 or 1080x1920 canvas; it never crops the same master. `format` and `platform` can be supplied as composition props for preview or export. See [references/social-formats.md](references/social-formats.md) for commands, safe-inset defaults, limitations and QA.
 
 ## Step 5 - Voiceover and timing
 

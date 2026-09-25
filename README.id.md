@@ -103,3 +103,7 @@ skills/motioncraft/
 MIT - liat [LICENSE](LICENSE). Remotion punya lisensi sendiri: gratis buat individu dan perusahaan kecil, perusahaan yang lebih besar butuh company license. Cek [remotion.dev/license](https://www.remotion.dev/license).
 
 Kredit topik dan tools di video contoh: [CREDITS.md](CREDITS.md).
+
+## Output sosial 1:1, 4:5, 9:16
+
+Satu komposisi responsif bisa diekspor ke tiga kanvas asli (1080x1080 IG feed, 1080x1350 IG feed, 1080x1920 TikTok). Teks, hero, kredit, dan end card pindah posisi, bukan sekadar crop tengah. Jalankan `render --all-formats`; untuk Reels gunakan `--format 9:16 --platform reels` terpisah. Lihat [panduan format dan batasannya](skills/motioncraft/references/social-formats.md). UI aplikasi bisa berubah, jadi cek tiap ekspor di aplikasi sebelum upload.

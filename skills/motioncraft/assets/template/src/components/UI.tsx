@@ -3,6 +3,8 @@ import {Img, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {S, C, FONT, MONO} from '../lib/tokens';
 import {cl, easeOut, ramp, spr, mix} from '../lib/anim';
 import {McBox, useDebug} from '../lib/debug';
+import {useFormat} from '../lib/format-context';
+import {geometry} from '../lib/format.mjs';
 const src = (s: string) => (s.startsWith('http') ? s : staticFile(s));
 
 // Card that rises in with a slight 3D tilt. Optional mac title bar.
@@ -60,10 +62,10 @@ export const CheckItem: React.FC<{at: number; text: string; done?: number; size?
   </McBox>;
 };
 
-export const StepCards: React.FC<{at: number; steps: string[]; gap?: number; step?: number}> = ({at, steps, gap = 48, step = 10}) => (
-  <div style={{display: 'flex', alignItems: 'center', gap}}>
+export const StepCards: React.FC<{at: number; steps: string[]; gap?: number; step?: number;vertical?:boolean}> = ({at, steps, gap = 48, step = 10,vertical=false}) => (
+  <div style={{display:'flex',flexDirection:vertical?'column':'row',alignItems:'center',gap:vertical?14:gap}}>
     {steps.map((s, i) => <React.Fragment key={i}>
-      <Card at={at + i * step} w={260} h={200}>
+      <Card at={at + i * step} w={vertical?540:210} h={vertical?110:170}>
         <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18}}>
           <div style={{width: 44, height: 44, borderRadius: 12, background: i === steps.length - 1 ? C.accent : C.cardBar, color: i === steps.length - 1 ? '#fff' : C.accent, fontFamily: FONT, fontWeight: 700, fontSize: 24, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{i + 1}</div>
           <div style={{fontFamily: FONT, fontWeight: 600, fontSize: 34, color: C.ink, letterSpacing: -0.7}}>{s}</div>
@@ -88,8 +90,8 @@ export const Callout: React.FC<{at: number; label: string; big: string; note?: s
 
 // Source credit, bottom-left, small. Required for every real number or third-party example.
 export const Credit: React.FC<{at: number; children: React.ReactNode}> = ({at, children}) => {
-  const f = useCurrentFrame(); const p = ramp(f, at, 12);
-  return <McBox kind="text" style={{position: 'absolute', left: S.layout.safe.x, bottom: S.layout.safe.y + 12, display: 'flex', alignItems: 'center', gap: 10, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: C.muted, opacity: p}}>
+  const f = useCurrentFrame(); const p = ramp(f, at, 12);const {format,platform}=useFormat();const g=geometry(format,platform);
+  return <McBox kind="text" style={{position: 'absolute', left:g.safe.x,bottom:g.insets.bottom+12, display: 'flex', alignItems: 'center', gap: 10, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: C.muted, opacity: p}}>
     <div style={{width: 7, height: 7, borderRadius: 4, background: C.highlight}} />{children}
   </McBox>;
 };

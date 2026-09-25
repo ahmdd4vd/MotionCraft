@@ -4,6 +4,7 @@ import os from 'node:os';
 import * as D from './dsp.mjs';
 import { ff, ffmpeg, probe, toWav48, run, die, readJson, mkdirp, has } from './util.mjs';
 import { silences } from './audio.mjs';
+import {geometry} from '../../assets/template/src/lib/format.mjs';
 
 export function qaFile(file, a) {
   const p = probe(file); const v = p.streams.find((s) => s.codec_type === 'video'); const au = p.streams.find((s) => s.codec_type === 'audio');
@@ -39,24 +40,27 @@ export function parseFrameRate(value) {
 // Overlap check: renders the composition in debug-box mode at 1/4 scale, then scans every frame.
 export function qaOverlap(a) {
   const proj = path.resolve(a.dir || '.'); const comp = a.comp || 'Main'; const scale = +(a.scale || 0.25); const tmp = path.join(os.tmpdir(), `mc-ov-${process.pid}`); mkdirp(tmp);
-  const props = JSON.stringify({ ...(a.props ? JSON.parse(a.props) : {}), mcDebug: true });
+  const supplied=a.props ? (a.props.trim().startsWith('{')?JSON.parse(a.props):readJson(path.resolve(a.props))) : {};
+  if(!supplied || typeof supplied!=='object'||Array.isArray(supplied))die('invalid --props JSON');
+  const g=geometry(a.format||supplied.format||'16:9',a.platform||supplied.platform);
+  const props=JSON.stringify({...supplied,format:g.format,platform:g.platform,mcDebug:true});
   const r = run('npx', ['--no-install', 'remotion', 'render', 'src/index.ts', comp, path.join(tmp, 'dbg.mp4'), `--props=${props}`, `--scale=${scale}`, '--codec=h264', '--crf=1', '--muted', `--gl=${a.gl || 'swangle'}`], { cwd: proj, stdio: ['ignore', 'ignore', 'pipe'] });
   if (r.status !== 0) die('debug render failed: ' + (r.stderr || '').slice(-600), 'run inside the project folder after npm install');
   const p = probe(path.join(tmp, 'dbg.mp4')); const v = p.streams.find((s) => s.codec_type === 'video'); const W = v.width, H = v.height; const fps = parseFrameRate(v.r_frame_rate);
   const F = ffmpeg(); const rawPath = path.join(tmp, 'frames.rgb');
   run(F.ff[0], [...F.ff.slice(1), '-y', '-v', 'error', '-i', path.join(tmp, 'dbg.mp4'), '-f', 'rawvideo', '-pix_fmt', 'rgb24', rawPath]);
-  const fsz = W * H * 3, frames = Math.floor(fs.statSync(rawPath).size / fsz); const safe = readJson(path.join(proj, 'src', 'style.json'))?.layout?.safe || { min: 60 }; const m = Math.round((safe.min || 60) * scale);
+  const fsz = W * H * 3, frames = Math.floor(fs.statSync(rawPath).size / fsz); const left=Math.round(g.insets.left*scale),right=Math.round(g.insets.right*scale),top=Math.round(g.insets.top*scale),bottom=Math.round(g.insets.bottom*scale);
   const hits = []; const minPx = Math.max(4, Math.round(W * H * 0.00015)); const fd = fs.openSync(rawPath, 'r'); const raw = Buffer.alloc(fsz);
   for (let f = 0; f < frames; f++) { let over = 0, blockOver = 0, edge = 0; fs.readSync(fd, raw, 0, fsz, f * fsz);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 3, R = raw[i], G = raw[i + 1], B = raw[i + 2];
       if (R > 200 && G < 100 && B < 100) over++;                       // two text boxes stacked (red on red)
       if (G > 200 && R < 110 && B < 110) blockOver++;                  // two blocks stacked (green on green)
-      if ((x < m || x >= W - m || y < m || y >= H - m) && R > 200 && G < 170 && B < 170) edge++; } // text in the margin
+      if ((x < left || x >= W-right || y < top || y >= H-bottom) && R > 200 && G < 170 && B < 170) edge++; } // text in the margin
     if (over > minPx || blockOver > minPx * 4 || edge > minPx) hits.push({ frame: f, time: +(f / fps).toFixed(2), textOverlapPx: over, blockOverlapPx: blockOver, textInMarginPx: edge }); }
   fs.closeSync(fd); fs.rmSync(rawPath, { force: true });
   const shots = []; const dir = path.resolve(proj, 'out', 'qa-overlap'); mkdirp(dir);
   const groups = []; for (const h of hits) { const g = groups[groups.length - 1]; if (g && h.frame - g.end <= 2) g.end = h.frame; else groups.push({ start: h.frame, end: h.frame, first: h }); }
   for (const g of groups.slice(0, 12)) { const o = path.join(dir, `overlap_f${g.start}.png`); ff(['-ss', (g.start / fps).toFixed(3), '-i', path.join(tmp, 'dbg.mp4'), '-frames:v', '1', o]); shots.push(o); }
-  return { frames, pass: hits.length === 0, problemRanges: groups.map((g) => ({ fromFrame: g.start, toFrame: g.end, fromSec: +(g.start / fps).toFixed(2), toSec: +(g.end / fps).toFixed(2), ...g.first })), screenshots: shots,
+  return { format:g.format,platform:g.platform,frames, pass: hits.length === 0, problemRanges: groups.map((g) => ({ fromFrame: g.start, toFrame: g.end, fromSec: +(g.start / fps).toFixed(2), toSec: +(g.end / fps).toFixed(2), ...g.first })), screenshots: shots,
     note: hits.length ? 'Red = text box, green = card/block. Dark red/green = two boxes stacked. Fix by moving to separate zones, exiting the old element first, or shortening text. Mark intentional stickers with allowOverlap.' : 'No flagged collisions among instrumented debug boxes at this resolution. This does not prove final pixels are collision-free; run qa pixels and inspect final frames.' };
 }
