@@ -47,3 +47,7 @@ Rule: never hard-code a time that belongs to the voice. Use `wordAt`. Hard-coded
 ## Adding a new component
 
 Take values from `S` / `C` (tokens), wrap text/blocks in `McBox`, accept an `at` frame, and hide text color in debug mode like the built-in components do. Then run `qa overlap`.
+
+## Beat-locked visual accents
+
+Pass the real beatgrid `beats` array (seconds) to `Main` or `TimelineLaunch` / `TimelineTutorial` composition props. `Main` snaps its hook, number and CTA to a nearby beat; timeline templates snap each headline, card and CTA to beats in absolute time. The helper `nearestBeatFrame(frame, beats, maxMs?)` is available for custom scenes and `beatAccent(frame, beats)` returns a brief scale multiplier for logo/shape accents. The default maximum adjustment (80 ms), pulse amount and decay live in each style's `motion.beat`. No grid means unchanged timings, not a synthetic clock. Check the actual music mix: the grid and music file must match.

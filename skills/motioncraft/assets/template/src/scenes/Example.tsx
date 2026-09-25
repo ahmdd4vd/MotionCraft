@@ -7,13 +7,14 @@ import {Strike, Card, Pill, CheckItem, StepCards, Callout, Credit, Counter} from
 import {FloatingShapes} from '../components/Three';
 import {EndCard} from '../components/EndCard';
 import {sec} from '../lib/anim';
+import {nearestBeatFrame, beatAccent} from '../lib/beat';
 import {FormatCtx, Format, Platform} from '../lib/format-context';
 import {geometry} from '../lib/format.mjs';
 import {DebugCtx} from '../lib/debug';
 
-export type MainProps = {handle: string; audio?: string; mcDebug?: boolean; format?:Format;platform?:Platform};
+export type MainProps = {handle: string; audio?: string; beats?: number[]; mcDebug?: boolean; format?:Format;platform?:Platform};
 
-export const Main: React.FC<MainProps> = ({handle, audio, mcDebug = false,format='16:9',platform='wide'}) => {
+export const Main: React.FC<MainProps> = ({handle, audio, beats = [], mcDebug = false,format='16:9',platform='wide'}) => {
   const f = useCurrentFrame();
   return <FormatCtx.Provider value={{format,platform}}><DebugCtx.Provider value={mcDebug}>
     <AbsoluteFill>
@@ -22,8 +23,8 @@ export const Main: React.FC<MainProps> = ({handle, audio, mcDebug = false,format
       <Camera keys={[[0, 1.04, 0, 0], [sec(4), 1, 0, 0], [sec(9), 1.03, 0, -6], [sec(12), 1, 0, 0]]}>
         {/* 1. Hook: 3D objects + short line */}
         <Scene from={0} to={sec(3.4)} noIn>
-          {!mcDebug && <AbsoluteFill style={{opacity: 0.9}}><FloatingShapes at={0} /></AbsoluteFill>}
-          <Center><Headline level="h1" items={words('Make videos like *this.*', 8)} /></Center>
+          {!mcDebug && <AbsoluteFill style={{opacity: 0.9}}><FloatingShapes at={nearestBeatFrame(0, beats)} /></AbsoluteFill>}
+          <Center><Headline level="h1" items={words('Make videos like *this.*', nearestBeatFrame(8, beats))} /></Center>
         </Scene>
         {/* 2. Reframe: "Not X. Y." */}
         <Scene from={sec(3.4)} to={sec(7.6)}>
@@ -40,7 +41,7 @@ export const Main: React.FC<MainProps> = ({handle, audio, mcDebug = false,format
           <Zone name="top"><Headline level="h1" size={64} items={words('Give *feedback* until it fits', sec(7.8))} /></Zone>
           <Zone name="center" style={{gap:format==='9:16'?18:12,flexDirection:format==='9:16'?'column':'row'}}>
             <Card at={sec(8.2)} w={format==='9:16'?620:430} h={format==='9:16'?340:250} title="preview">
-              <div style={{height:'100%',display:'grid',placeItems:'center'}}><Counter at={sec(8.6)} to={30} suffix=" fps" size={format==='9:16'?100:70} /></div>
+              <div style={{height:'100%',display:'grid',placeItems:'center'}}><Counter at={nearestBeatFrame(sec(8.6), beats)} to={30} suffix=" fps" size={format==='9:16'?100:70} /></div>
             </Card>
             <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
               <CheckItem at={sec(9)} done={sec(10)} text="font too big" />
@@ -58,7 +59,7 @@ export const Main: React.FC<MainProps> = ({handle, audio, mcDebug = false,format
         {/* 5. CTA */}
         <Scene from={sec(15.2)} to={sec(17.6)}>
           <Zone name="top"><Headline level="h1" size={64} items={words('Want the full *style?*', sec(15.4))} /></Zone>
-          <Zone name="center"><Callout at={sec(16)} label="Comment" big="STYLE" note="we send you the file" /></Zone>
+          <Zone name="center"><Callout at={nearestBeatFrame(sec(16), beats)} label="Comment" big="STYLE" note="we send you the file" /></Zone>
         </Scene>
         {/* 6. End card */}
         <Scene from={sec(17.6)} to={sec(30)} noOut>

@@ -30,6 +30,7 @@
     "in": "quad"
   },
   "motion": {
+    "beat": {"snapMs": 80, "pulse": 0.025, "pulseFrames": 8},
     "word":  { "inFrames": 12, "blur": 10, "rise": 0.28, "colorFrames": 14, "accentColorFrames": 20, "stagger": [4, 5], "spring": { "damping": 11, "stiffness": 140, "mass": 0.7 } },
     "wordOut": { "frames": 9, "blur": 10, "rise": 0.12, "stagger": 1.5 },
     "card":  { "frames": 24, "rise": 180, "rotateX": 12, "blur": 12, "scaleFrom": 0.92 },
