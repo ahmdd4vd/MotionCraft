@@ -25,7 +25,7 @@ node <skill-dir>/scripts/motioncraft.mjs <command>
 
 1. **Reference first.** Never invent a style from nothing. Use a locked style from `styles/` or analyze a reference video the user gives (`ref get` + `ref report`).
 2. **One idea per frame.** One headline, one focus. Headline and hero visual live in separate zones.
-3. **Check overlaps at final pixels.** No text should touch other text or leave the safe area. `qa overlap` only checks instrumented debug boxes; inspect real final frames before claiming the layout is clear.
+3. **Check overlaps at final pixels.** No text should touch other text or leave the safe area. `qa overlap` only checks instrumented debug boxes; run `qa full <final-video>` to check every decoded frame, then inspect real final frames before claiming the layout is clear.
 4. **Everything is timed to voice and beat.** Words appear when they are spoken. Big moments land on the beat or the drop.
 5. **Only true facts.** Numbers, names, prices and claims must be checked against a live source right before render. Credit third-party examples on screen (`<Credit>`).
 6. **Original or free audio only.** Music is synthesized by the CLI or CC0. Never use licensed tracks.

@@ -4,6 +4,7 @@ import { parseArgs, out, die } from './lib/util.mjs';
 import { doctor, printDoctor } from './lib/doctor.mjs';
 import * as C from './lib/commands.mjs';
 import { qaFile, qaAudio, qaSheet, qaOverlap } from './lib/qa.mjs';
+import {qaFull} from './lib/qa-full.mjs';
 import {qaPixels} from './lib/qa-pixels.mjs';
 import { cmdRender } from './lib/render.mjs';
 import { cmdStyle } from './lib/style.mjs';
@@ -40,6 +41,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   music moods --mood premium|calm|warm|focused|bright
   mix review --file audio/final.wav [--cues audio/auto-cues.json] [--out out/mix-review]; after listening: --approve
   cache3d --comp LogoOnly --start 0 --end 89 --sources src/scenes/Logo.tsx,src/style.json [--scale 1]
+  qa full <video> [--outDir out/qa-full]  scan every decoded frame of real video for text issues
   qa pixels <video> [--board storyboard.json] [--outDir out/qa-pixels] | overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
   gpu probe --dir project [--gl angle|egl|swangle]
   worker manifest --dir project --comp Main --gl angle --out render-job.json | verify --dir project --manifest render-job.json
@@ -68,7 +70,7 @@ try {
     case 'preview': out(preview(a)); break;
     case 'cache3d': out(cache3d(a)); break;
     case 'qa': { const s = a._[0], f = a._[1];
-      if (s === 'pixels') out(qaPixels(a)); else if (s === 'overlap') out(qaOverlap(a)); else if (s === 'sheet') out(qaSheet(f, a)); else if (s === 'audio') out(qaAudio(f)); else if (s === 'file') out(qaFile(f, a));
+      if (s === 'full') out(qaFull(a)); else if (s === 'pixels') out(qaPixels(a)); else if (s === 'overlap') out(qaOverlap(a)); else if (s === 'sheet') out(qaSheet(f, a)); else if (s === 'audio') out(qaAudio(f)); else if (s === 'file') out(qaFile(f, a));
       else if (s === 'all') { const r = { file: qaFile(f, a), audio: qaAudio(f), sheet: qaSheet(f, a), overlap: a.comp || a.dir ? qaOverlap(a) : 'skipped (pass --comp/--dir to run inside the project)' }; r.pass = r.file.pass && r.audio.pass && (typeof r.overlap === 'string' || r.overlap.pass); out(r); }
       else die('usage: qa overlap|sheet|audio|file|all'); break; }
     case undefined: case 'help': case '--help': case '-h': console.log(HELP); break;
