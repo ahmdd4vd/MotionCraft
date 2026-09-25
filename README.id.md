@@ -111,3 +111,7 @@ Satu komposisi responsif bisa diekspor ke tiga kanvas asli (1080x1080 IG feed, 1
 ### SFX otomatis dari data animasi
 
 `motioncraft sfx auto --board storyboard.json --timeline public/timeline.json --out audio/auto-cues.json` bikin cue jarang dari headline dan pergantian scene, lalu event animasi terstruktur (teks, transisi, klik UI, check, logo reveal). Timeline opsional; aksi UI/logo tidak ditebak dari deskripsi. `scene.events` tetap bisa override penuh (`[]` berarti sengaja hening). Dengarkan dan cek hasil sebelum rilis: alat ini belum membaca sembarang kode animasi Remotion atau menilai apakah suaranya cocok. Lihat [panduan timeline audio](skills/motioncraft/references/phase2-timeline-audio.md).
+
+### Editor timeline
+
+Jalankan `motioncraft timeline init launch --out timeline-launch.json`, lalu `timeline edit --board timeline-launch.json --grid audio/beatgrid.json --out timeline-editor.html`. Di halaman lokal, geser blok scene, ubah durasi dan offset penanda beat. Render `TimelineLaunch` dengan `--timeline storyboard.edited.json --grid beatgrid.edited.json`; untuk tutorial gunakan `tutorial` dan `TimelineTutorial`. Dua komposisi ini mengikuti urutan dan durasi baru tanpa edit kode. Komposisi lama yang hard-coded belum. Footage, VO dan musik perlu dicek sinkronnya sendiri; geser beat marker tidak mengubah musik. [Panduan](skills/motioncraft/references/phase1-planning-and-preview.md#reorder-and-retime-the-rendered-video).

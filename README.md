@@ -111,3 +111,7 @@ One responsive Remotion composition can export three real canvas dimensions (108
 ### Automatic SFX from animation data
 
 `motioncraft sfx auto --board storyboard.json --timeline public/timeline.json --out audio/auto-cues.json` creates sparse cue timing from scene headlines and boundaries plus structured animation events (text, transition, UI click, check, logo reveal). The timeline is optional; the tool never guesses UI or logo actions from prose. `scene.events` remains an exact override (`[]` means silence). Review and listen before publishing: this does not parse arbitrary Remotion animation code or judge whether a sound fits. See [timeline audio](skills/motioncraft/references/phase2-timeline-audio.md).
+
+### Timeline editor
+
+`motioncraft timeline init launch --out timeline-launch.json`, then `timeline edit --board timeline-launch.json --grid audio/beatgrid.json --out timeline-editor.html` opens a local editor. Drag scene blocks, edit durations and offset beat markers; render `TimelineLaunch` with `--timeline storyboard.edited.json --grid beatgrid.edited.json`. For tutorials use `tutorial` and `TimelineTutorial`. Those compositions follow the edited scene order and timing without code edits. Existing hand-coded compositions do not. Footage, VO and music still need independent sync review; beat-marker changes do not change music. [Guide](skills/motioncraft/references/phase1-planning-and-preview.md#reorder-and-retime-the-rendered-video).
