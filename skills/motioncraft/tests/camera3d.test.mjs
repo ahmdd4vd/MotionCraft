@@ -18,4 +18,5 @@ test('the 3D components accept per-shot camera moves', () => {
   const source = fs.readFileSync(new URL('../assets/template/src/components/Three.tsx', import.meta.url), 'utf8');
   for (const name of ['Logo3D', 'Mascot', 'FloatingShapes']) assert.match(source, new RegExp(`export const ${name}:[^\\n]+cameraMove`));
   assert.match(source, /camera\.position\.set\(/);
+  assert.match(source, /if \(a === -1\) return sorted\[sorted\.length - 1\]/);
 });

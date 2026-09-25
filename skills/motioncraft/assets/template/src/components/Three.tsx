@@ -29,7 +29,8 @@ export const camera3DAt = (frame: number, keys: Camera3DKey[]) => {
   const sorted = [...keys].sort((a, b) => a[0] - b[0]);
   if (!sorted.length) throw new Error('Camera3D needs at least one key');
   const a = sorted.findIndex((k) => k[0] >= frame);
-  if (a <= 0) return sorted[0].slice(1);
+  if (a === -1) return sorted[sorted.length - 1].slice(1);
+  if (a === 0) return sorted[0].slice(1);
   const lo = sorted[a - 1], hi = sorted[a];
   const t = interpolate(frame, [lo[0], hi[0]], [0, 1], {...cl, easing: (x) => x * x * (3 - 2 * x)});
   return lo.slice(1).map((v, i) => v + (hi[i + 1] - v) * t);
