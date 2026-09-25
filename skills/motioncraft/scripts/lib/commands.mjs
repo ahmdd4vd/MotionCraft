@@ -74,8 +74,14 @@ export function cmdMix(a) {
       for (let i = 0; i < m.L.length; i++) { const k = Math.min(1, env[i] * 12); const g = 1 - k * (1 - D.db(-7)); m.L[i] = (m.L[i] * (1 - k) + dip.L[i] * k) * g; m.R[i] = (m.R[i] * (1 - k) + dip.R[i] * k) * g; } }
     D.mixInto(mix, m); }
   if (sfx) D.mixInto(mix, sfx, D.db(a.sfxDb ? +a.sfxDb : -4));
-  const M = D.master(mix, a.lufs ? +a.lufs : -14, -1.5); const o = path.resolve(a.out || 'audio/final.wav'); mkdirp(path.dirname(o)); D.writeWav(o, M.buf, 24, fs);
-  return { final: o, lufs: +M.lufs.toFixed(2), truePeak: +M.truePeak.toFixed(2), duration: +(n / D.SR).toFixed(2) };
+  let finalMix=mix;
+  if (a.duration != null) { const seconds=Number(a.duration); if(!Number.isFinite(seconds)||seconds<=0)die('--duration needs positive seconds');
+    const samples=Math.round(seconds*D.SR);if(mix.L.length<samples)die(`mix sources too short for ${seconds}s (${(mix.L.length/D.SR).toFixed(2)}s); extend music/VO before mixing`);
+    finalMix=D.stereo(samples);finalMix.L.set(mix.L.subarray(0,samples));finalMix.R.set(mix.R.subarray(0,samples));
+    const fade=Math.min(samples,Math.round(0.35*D.SR));for(let i=0;i<fade;i++){const g=(fade-i-1)/fade;finalMix.L[samples-fade+i]*=g;finalMix.R[samples-fade+i]*=g;}
+  }
+  const M = D.master(finalMix, a.lufs ? +a.lufs : -14, -1.5); const o = path.resolve(a.out || 'audio/final.wav'); mkdirp(path.dirname(o)); D.writeWav(o, M.buf, 24, fs);
+  return { final: o, lufs: +M.lufs.toFixed(2), truePeak: +M.truePeak.toFixed(2), duration: +(finalMix.L.length / D.SR).toFixed(2) };
 }
 
 // ---------------- analysis

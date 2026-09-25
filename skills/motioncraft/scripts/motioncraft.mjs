@@ -7,6 +7,7 @@ import { qaFile, qaAudio, qaSheet, qaOverlap } from './lib/qa.mjs';
 import { cmdRender } from './lib/render.mjs';
 import { cmdStyle } from './lib/style.mjs';
 import {storyboard, preview, cache3d} from './lib/phase1.mjs';
+import {autoCues,moodOptions,mixReview} from './lib/phase2.mjs';
 
 const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
 
@@ -19,14 +20,17 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   music presets | make [--preset dreamy] [--duration 52] [--drop 12.9] [--key D] [--bpm 93] [--spec music.json] [--stems] [--out audio]
   music audition [...same]             3 x 16 s variations to choose from
   sfx list | make --cues sfx.json [--bpm 93] [--pack soft-pop] [--density 1] [--out audio/sfx.wav]
-  mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--out audio/final.wav]
+  mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--duration 52] [--out audio/final.wav]
   beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
   timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
   storyboard --brief brief.json [--out storyboard.json] [--md storyboard.md]
   preview --board storyboard.json [--comp Main] [--scale 0.35] [--out out/preview-stills]
+  sfx auto --board storyboard.json [--maxPerMin 24] [--out audio/auto-cues.json]
+  music moods --mood premium|calm|warm|focused|bright
+  mix review --file audio/final.wav [--cues audio/auto-cues.json] [--out out/mix-review]; after listening: --approve
   cache3d --comp LogoOnly --start 0 --end 89 --sources src/scenes/Logo.tsx,src/style.json [--scale 1]
   qa overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
-  render [--comp Main] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
+  render [--review out/mix-review/review.json] [--comp Main] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
 `;
 const [cmd, ...rest] = process.argv.slice(2); const a = parseArgs(rest);
 try {
@@ -37,9 +41,9 @@ try {
     case 'ref': out(C.cmdRef(a)); break;
     case 'audio': out(C.cmdAudio(a)); break;
     case 'vo': out(C.cmdVo(a)); break;
-    case 'music': out(C.cmdMusic({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
-    case 'sfx': out(C.cmdSfx({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
-    case 'mix': out(C.cmdMix(a)); break;
+    case 'music': out(a._[0]==='moods'?moodOptions(a):C.cmdMusic({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
+    case 'sfx': out(a._[0]==='auto'?autoCues(a):C.cmdSfx({ ...a, _: a._[0] === 'make' ? a._.slice(1) : a._ })); break;
+    case 'mix': out(a._[0]==='review'?mixReview(a):C.cmdMix(a)); break;
     case 'beat': out(C.cmdBeat(a)); break;
     case 'timeline': out(C.cmdTimeline(a)); break;
     case 'render': out(cmdRender(a)); break;

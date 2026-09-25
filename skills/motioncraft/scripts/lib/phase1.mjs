@@ -38,7 +38,7 @@ export function storyboard(a) {
   let start=0;
   for (let i=0;i<specs.length;i++) { const s=specs[i], role=clean(s.role)||'scene'; const end=ends[i];
     scenes.push({ id: `${String(i+1).padStart(2,'0')}-${slug(role)}`, role, fromFrame:start, toFrame:end, start:+(start/fps).toFixed(2), end:+(end/fps).toFixed(2), previewFrame:Math.min(end-1, start+Math.max(1,Math.floor((end-start)*0.72))),
-      headline:clean(s.headline), visual:clean(s.visual) || VISUAL[role] || 'one clear focal point', proof:clean(s.proof), cue:clean(s.cue), status:s.headline?'draft':'needs_copy' }); start=end; }
+      headline:clean(s.headline), visual:clean(s.visual) || VISUAL[role] || 'one clear focal point', proof:clean(s.proof), cue:clean(s.cue), ...(s.events ? {events:s.events} : {}), status:s.headline?'draft':'needs_copy' }); start=end; }
   const board={version:1, topic:brief.topic, audience:brief.audience, goal:brief.goal, language:brief.language, format:brief.format, duration:brief.duration, fps, handle:clean(brief.handle), cta:clean(brief.cta), scenes,
     notes:['This is a timing and visual-role scaffold, not a written script or a Remotion composition.', 'Fill each headline, confirm factual claims and licenses, and inspect the stills before a full render.']};
   const file=path.resolve(a.out||'storyboard.json'); writeJson(file,board);

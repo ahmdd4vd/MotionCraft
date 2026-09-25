@@ -108,15 +108,20 @@ Always read back the transcript. TTS voices often mispronounce names and brand w
 ## Step 6 - Music, SFX, mix
 
 ```bash
+node <skill-dir>/scripts/motioncraft.mjs music moods --mood premium
 node <skill-dir>/scripts/motioncraft.mjs music presets
 node <skill-dir>/scripts/motioncraft.mjs music audition --duration 52        # 3 short options
 node <skill-dir>/scripts/motioncraft.mjs music make --preset <id> --duration 52 --drop 12.9 --out audio
 node <skill-dir>/scripts/motioncraft.mjs beat grid --bpm 93 --dur 52
-node <skill-dir>/scripts/motioncraft.mjs sfx make --cues sfx.json --pack soft-pop --out audio/sfx.wav
-node <skill-dir>/scripts/motioncraft.mjs mix --vo vo_clean.wav --music audio/music.wav --sfx audio/sfx.wav --out audio/final.wav
+node <skill-dir>/scripts/motioncraft.mjs sfx auto --board storyboard.json --out audio/auto-cues.json
+node <skill-dir>/scripts/motioncraft.mjs sfx make --cues audio/auto-cues.json --pack soft-pop --out audio/sfx.wav
+node <skill-dir>/scripts/motioncraft.mjs mix --vo vo_clean.wav --music audio/music.wav --sfx audio/sfx.wav --duration 52 --out audio/final.wav
+node <skill-dir>/scripts/motioncraft.mjs mix review --file audio/final.wav --cues audio/auto-cues.json
+# Listen to the full mix and snippets, then record approval:
+node <skill-dir>/scripts/motioncraft.mjs mix review --file audio/final.wav --approve
 ```
 
-Music sits under the voice, never on top. SFX are small and sparse: one sound per meaningful event. The mix targets -14 LUFS and -1 dBTP. See [references/music.md](references/music.md) and [references/sfx.md](references/sfx.md).
+Music sits under the voice, never on top. SFX are small and sparse: one sound per meaningful event. The mix targets -14 LUFS and -1 dBTP. See [references/music.md](references/music.md), [references/sfx.md](references/sfx.md), and [references/phase2-timeline-audio.md](references/phase2-timeline-audio.md).
 
 ## Step 7 - Build scenes
 
@@ -138,7 +143,7 @@ node <skill-dir>/scripts/motioncraft.mjs qa overlap --comp Main
 This renders a low-res debug pass where every text box is red and every block is green, then flags stacked boxes and text in the margin, with screenshots. Fix every hit. Then render and run the full check:
 
 ```bash
-node <skill-dir>/scripts/motioncraft.mjs render --comp Main --preset wa --audio audio/final.wav --out out/final.mp4
+node <skill-dir>/scripts/motioncraft.mjs render --comp Main --preset wa --audio audio/final.wav --review out/mix-review/review.json --out out/final.mp4
 node <skill-dir>/scripts/motioncraft.mjs qa all out/final.mp4 --comp Main --maxMb 16
 ```
 

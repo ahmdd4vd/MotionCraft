@@ -1,9 +1,12 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { run, die, ff, probe, mkdirp, has } from './util.mjs';
+import { run, die, ff, probe, mkdirp, has, readJson } from './util.mjs';
+import {reviewHash} from './phase2.mjs';
 const PRESETS = { wa: { maxMb: 15.5, audioK: 128 }, ig: { maxMb: 95, audioK: 192 }, yt: { crf: 16, audioK: 192 }, master: { crf: 12, audioK: 256 } };
 export function cmdRender(a) {
   const proj = path.resolve(a.dir || '.'); const comp = a.comp || 'Main'; const preset = PRESETS[a.preset || 'yt'] || die(`unknown preset ${a.preset}`, 'wa | ig | yt | master');
+  if(a.audio){ const audio=path.resolve(a.audio), review=readJson(path.resolve(a.review||path.join(proj,'out/mix-review/review.json')));
+    if(!review?.approvedAt||review.source!==audio||review.sha256!==reviewHash(audio))die('mix review missing or stale; listen to full mix and cue clips, then run mix review --file <mix> --approve before export'); }
   mkdirp(path.join(proj, 'out')); const raw = path.join(proj, 'out', 'raw.mp4'); const gl = a.gl || (process.platform === 'linux' && !fs.existsSync('/dev/dri') ? 'swangle' : 'angle');
   const args = ['--no-install', 'remotion', 'render', 'src/index.ts', comp, raw, '--crf=14', `--gl=${gl}`]; if (a.props) args.push(`--props=${a.props}`); if (a.concurrency) args.push(`--concurrency=${a.concurrency}`);
   if (!a.skipRender) { const r = run('npx', args, { cwd: proj, stdio: 'inherit' }); if (r.status !== 0) die('render failed', 'common fixes: video clips that fail to decode -> convert to a JPG sequence (<Frames>); out of memory -> --concurrency 2; WebGL errors -> --gl swangle'); }
