@@ -26,13 +26,23 @@ export function qaSheet(file, a) {
   const sheet = path.join(dir, 'sheet.jpg'); ff(['-pattern_type', 'glob', '-i', path.join(dir, 'q_*.jpg'), '-frames:v', '1', '-vf', 'tile=4x6:padding=4', sheet]);
   return { sheet, frames: frames.length, note: 'Open the sheet. Check: text collisions, text near edges, one focus per frame, hierarchy, accent count, anything that looks like AI slop.' };
 }
+// ffprobe reports frame rates as rational strings. Never execute metadata as code.
+export function parseFrameRate(value) {
+  if (typeof value !== 'string' || !/^[0-9]+(?:\/[0-9]+)?$/.test(value)) throw new Error('invalid ffprobe frame rate');
+  const [numerator, denominator = '1'] = value.split('/');
+  const n = Number(numerator), d = Number(denominator);
+  if (!Number.isSafeInteger(n) || !Number.isSafeInteger(d) || n <= 0 || d <= 0) throw new Error('invalid ffprobe frame rate');
+  const fps = n / d;
+  if (!Number.isFinite(fps) || fps <= 0) throw new Error('invalid ffprobe frame rate');
+  return fps;
+}
 // Overlap check: renders the composition in debug-box mode at 1/4 scale, then scans every frame.
 export function qaOverlap(a) {
   const proj = path.resolve(a.dir || '.'); const comp = a.comp || 'Main'; const scale = +(a.scale || 0.25); const tmp = path.join(os.tmpdir(), `mc-ov-${process.pid}`); mkdirp(tmp);
   const props = JSON.stringify({ ...(a.props ? JSON.parse(a.props) : {}), mcDebug: true });
   const r = run('npx', ['--no-install', 'remotion', 'render', 'src/index.ts', comp, path.join(tmp, 'dbg.mp4'), `--props=${props}`, `--scale=${scale}`, '--codec=h264', '--crf=1', '--muted', `--gl=${a.gl || 'swangle'}`], { cwd: proj, stdio: ['ignore', 'ignore', 'pipe'] });
   if (r.status !== 0) die('debug render failed: ' + (r.stderr || '').slice(-600), 'run inside the project folder after npm install');
-  const p = probe(path.join(tmp, 'dbg.mp4')); const v = p.streams.find((s) => s.codec_type === 'video'); const W = v.width, H = v.height; const fps = eval(v.r_frame_rate);
+  const p = probe(path.join(tmp, 'dbg.mp4')); const v = p.streams.find((s) => s.codec_type === 'video'); const W = v.width, H = v.height; const fps = parseFrameRate(v.r_frame_rate);
   const F = ffmpeg(); const rawPath = path.join(tmp, 'frames.rgb');
   run(F.ff[0], [...F.ff.slice(1), '-y', '-v', 'error', '-i', path.join(tmp, 'dbg.mp4'), '-f', 'rawvideo', '-pix_fmt', 'rgb24', rawPath]);
   const fsz = W * H * 3, frames = Math.floor(fs.statSync(rawPath).size / fsz); const safe = readJson(path.join(proj, 'src', 'style.json'))?.layout?.safe || { min: 60 }; const m = Math.round((safe.min || 60) * scale);
