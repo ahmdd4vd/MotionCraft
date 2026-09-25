@@ -28,3 +28,7 @@ For 9:16, keep the same pixel sizes; the narrower width forces shorter lines, wh
 ## Measuring
 
 `Headline` measures every word with `@remotion/layout-utils` and breaks lines by real width: one line if it fits, otherwise the most balanced two lines, never a single orphan word on line 2. If it still does not fit in 2 lines, it prints a `[motioncraft] headline too long` warning in the console - rewrite the line shorter; do not drop below the level's minimum size.
+
+## Kinetic reveals (v0.5)
+
+`<Headline reveal="character" items={words('A big *idea*', at)} />` staggers characters inside each word with fixed layout width. The default word reveal remains unchanged. Character timing, blur and rise come from `motion.character` in the selected style. Keep copy short and inspect the entire line at phone size; character reveals on long sentences read slowly. `<Counter from={20} to={100} at={...} decimals={0} />` animates a cited number, and `motion.number.duration` controls its default length. A counter still needs a visible `<Credit>` for real data.

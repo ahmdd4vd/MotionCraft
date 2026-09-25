@@ -2,6 +2,7 @@ import React from 'react';
 import {Img, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {S, C, FONT} from '../lib/tokens';
 import {cl, easeIn, easeInOut, mix, ramp, spr} from '../lib/anim';
+import {McBox} from '../lib/debug';
 import {useDebug} from '../lib/debug';
 const M = S.motion;
 
@@ -29,4 +30,17 @@ export const InlineIcon: React.FC<{src: string; at: number; size: number; out?: 
   return <span style={{display: 'inline-flex', justifyContent: 'center', alignItems: 'center', width: wv * size * I.slotWidth, height: size, verticalAlign: 'middle'}}>
     <Img src={src.startsWith('http') ? src : staticFile(src)} style={{height: size * 1.05, width: 'auto', transform: `translateY(${fl}px) scale(${sc}) rotate(${(1 - s) * I.rotate}deg)`, opacity: o, filter: 'drop-shadow(0 10px 14px rgba(30,60,110,0.16))'}} />
   </span>;
+};
+
+// Character-level reveal keeps the full word's layout width from the start,
+// so staggering never causes line reflow. Unicode code points stay intact.
+export const CharReveal: React.FC<{text: string; at: number; size: number; accent?: boolean; weight?: number; out?: number}> = ({text, at, size, accent, weight = S.font.weights.h1, out}) => {
+  const f=useCurrentFrame();const dbg=useDebug();const chars=Array.from(text);
+  return <McBox kind="text" style={{display:'inline-block',whiteSpace:'pre',fontFamily:FONT,fontWeight:weight,fontSize:size,lineHeight:1,letterSpacing:size*S.font.tracking}}>
+    {chars.map((ch,i)=>{const p=ramp(f,at+i*M.character.stagger,M.character.frames);
+      const q=out===undefined?0:ramp(f,out+i*M.wordOut.stagger,M.wordOut.frames);
+      return <span key={i} style={{display:'inline-block',color:dbg?'transparent':accent?C.accent:C.ink,opacity:p*(1-q),
+        filter:dbg?undefined:`blur(${(1-p)*M.character.blur+q*M.wordOut.blur}px)`,transform:`translateY(${(1-p)*size*M.character.rise}px)`}}>{ch}</span>;
+    })}
+  </McBox>;
 };

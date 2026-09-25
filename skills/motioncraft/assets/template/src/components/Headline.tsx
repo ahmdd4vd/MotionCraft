@@ -3,7 +3,7 @@ import {measureText} from '@remotion/layout-utils';
 import {S, FONT} from '../lib/tokens';
 import {useFormat} from '../lib/format-context';
 import {geometry} from '../lib/format.mjs';
-import {Word, InlineIcon} from './Word';
+import {Word, InlineIcon, CharReveal} from './Word';
 import {McBox} from '../lib/debug';
 
 export type Item = {t?: string; icon?: string; at: number; accent?: boolean};
@@ -27,8 +27,8 @@ const layout = (items: Item[], size: number, weight: number, maxW: number) => {
   return {lines: [items.slice(0, best), items.slice(best)], overflow: false};
 };
 
-export const Headline: React.FC<{items: Item[]; level?: Level; size?: number; out?: number; maxWidth?: number; align?: 'center' | 'left'; style?: React.CSSProperties; allowOverlap?: boolean}> =
-({items, level = 'h1', size, out, maxWidth, align = 'center', style, allowOverlap}) => {
+export const Headline: React.FC<{items: Item[]; level?: Level; size?: number; out?: number; maxWidth?: number; align?: 'center' | 'left'; style?: React.CSSProperties; allowOverlap?: boolean; reveal?: 'word'|'character'}> =
+({items, level = 'h1', size, out, maxWidth, align = 'center', style, allowOverlap, reveal = 'word'}) => {
   const {format,platform}=useFormat(); const g=geometry(format,platform); const maxW=Math.min(maxWidth ?? g.safe.width,g.safe.width);
   const range=S.font.size[level]; const fs=(size ?? range[1]) * (g.width<1400 ? .78 : 1); const weight = S.font.weights[level];
   const lh = S.font.lineHeight[level];
@@ -39,7 +39,7 @@ export const Headline: React.FC<{items: Item[]; level?: Level; size?: number; ou
     {lines.map((line, li) => <div key={li} style={{display: 'flex', alignItems: 'center', height: fs * lh, justifyContent: align === 'center' ? 'center' : 'flex-start'}}>
       {line.map((it, k) => { const i = idx++; const o = out !== undefined ? out + i * S.motion.wordOut.stagger : undefined;
         const space = k > 0 && !line[k - 1].icon && !it.icon ? ' ' : '';
-        return it.icon ? <InlineIcon key={k} src={it.icon} at={it.at} size={fs * 1.05} out={o} /> : <Word key={k} t={space + it.t} at={it.at} size={fs} accent={it.accent} out={o} weight={weight} />; })}
+        return it.icon ? <InlineIcon key={k} src={it.icon} at={it.at} size={fs * 1.05} out={o} /> : reveal === 'character' ? <CharReveal key={k} text={space + it.t} at={it.at} size={fs} accent={it.accent} out={o} weight={weight} /> : <Word key={k} t={space + it.t} at={it.at} size={fs} accent={it.accent} out={o} weight={weight} />; })}
     </div>)}
   </McBox>;
 };

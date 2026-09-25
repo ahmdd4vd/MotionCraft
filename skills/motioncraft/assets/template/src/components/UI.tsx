@@ -39,8 +39,8 @@ export const Keycap: React.FC<{at: number; children: React.ReactNode; size?: num
 };
 
 // Number counting up to a REAL value. Always pair with <Credit> for the source.
-export const Counter: React.FC<{at: number; to: number; dur?: number; size?: number; suffix?: string; decimals?: number; color?: string}> = ({at, to, dur = 36, size = 140, suffix = '', decimals = 0, color = C.ink}) => {
-  const f = useCurrentFrame(); const p = ramp(f, at, dur); const v = (to * p).toFixed(decimals); const dbg = useDebug();
+export const Counter: React.FC<{at: number; to: number; from?: number; dur?: number; size?: number; suffix?: string; decimals?: number; color?: string}> = ({at, to, from = 0, dur = S.motion.number.duration, size = 140, suffix = '', decimals = 0, color = C.ink}) => {
+  const f = useCurrentFrame(); const p = ramp(f, at, dur); const v = (from + (to - from) * p).toFixed(decimals); const dbg = useDebug();
   return <McBox kind="text" style={{fontFamily: FONT, fontWeight: 700, fontSize: size, letterSpacing: size * S.font.tracking, color: dbg ? 'transparent' : color, opacity: ramp(f, at, 8), fontVariantNumeric: 'tabular-nums', lineHeight: 1}}>{Number(v).toLocaleString('en-US', {minimumFractionDigits: decimals})}{suffix}</McBox>;
 };
 
