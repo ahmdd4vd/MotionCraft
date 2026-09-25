@@ -19,6 +19,7 @@ Rule: never hard-code a time that belongs to the voice. Use `wordAt`. Hard-coded
 ## Building blocks
 
 - `Scene from to` - a scene window. Scenes overlap by `motion.scene.overlap` frames with a blur crossfade. Never hard-cut.
+- `Camera3D keys` - actual perspective dolly/orbit/target motion inside each 3D canvas. Pass `cameraMove={[[frame, distance, orbitRadians, targetX, targetY], ...]}` to `FloatingShapes`, `Logo3D`, or `Mascot` for a per-scene shot; the default comes from `three.camera.moves` style tokens as offsets from `at` (distance is a multiplier of the canvas base distance). Depth-separated shapes produce actual parallax. Check the rendered frame; this does not move DOM headline text.
 - `Camera keys` - slow in-out camera moves `[frame, scale, x, y]` plus a tiny constant drift so the frame never goes dead. Max zoom comes from tokens.
 - `Zone name="top|center|bottom"` - keeps headline and hero from competing for space.
 - `Headline items={words('Text with *accent*', at)} level="h0|h1|h2"` - words rise out of blur, one after another, accent gets the accent color.
