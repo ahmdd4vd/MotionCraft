@@ -91,7 +91,7 @@ export const Callout: React.FC<{at: number; label: string; big: string; note?: s
 // Source credit, bottom-left, small. Required for every real number or third-party example.
 export const Credit: React.FC<{at: number; children: React.ReactNode}> = ({at, children}) => {
   const f = useCurrentFrame(); const p = ramp(f, at, 12);const {format,platform}=useFormat();const g=geometry(format,platform);
-  return <McBox kind="text" style={{position: 'absolute', left:g.safe.x,bottom:g.insets.bottom+12, display: 'flex', alignItems: 'center', gap: 10, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: C.muted, opacity: p}}>
+  return <McBox kind="text" style={{position: 'absolute', left:g.safe.x+40,bottom:g.insets.bottom+12, display: 'flex', alignItems: 'center', gap: 10, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: C.muted, opacity: p}}>
     <div style={{width: 7, height: 7, borderRadius: 4, background: C.highlight}} />{children}
   </McBox>;
 };
