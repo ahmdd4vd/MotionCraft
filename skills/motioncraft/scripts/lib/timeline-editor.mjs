@@ -45,26 +45,30 @@ export function timelineEditor(a){
  const script=fs.readFileSync(new URL('../assets/timeline-editor.js',import.meta.url),'utf8');
  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MotionCraft timeline editor</title><style>
  :root{font-family:system-ui,sans-serif;color:#e8edf7;background:#111827}body{max-width:900px;margin:35px auto;padding:0 20px}h1{font-size:28px}p{color:#aab8ce;line-height:1.5}.row{display:flex;align-items:center;gap:14px;background:#243247;border:1px solid #465a76;padding:14px;margin:8px 0;border-radius:10px}.row.dragging{opacity:.45}.handle{cursor:grab;font-size:25px}.name{flex:1}.name small{display:block;color:#aab8ce}input{width:72px;padding:7px;background:#111827;color:white;border:1px solid #789;border-radius:5px}button{padding:10px 14px;margin:8px 8px 8px 0;background:#72bcf5;color:#102033;border:0;border-radius:6px;font-weight:700;cursor:pointer}button:focus,input:focus{outline:2px solid #ffa86c}#error{color:#ffaaa0}code{color:#b3dafa}</style>
- <h1>MotionCraft timeline editor</h1><p>Drag scenes to reorder. Change each duration in seconds. Shift the beat grid by a signed offset. Export both files, then review the updated storyboard against your Remotion composition before rendering. The TimelineLaunch and TimelineTutorial compositions render this exported timing plan without code edits.</p>
+ <h1>MotionCraft timeline editor</h1><p>Drag scenes to reorder. Change each duration in seconds. Shift the beat grid by a signed offset. Export both files, then review the updated storyboard against your Remotion composition before rendering. Main, MainVertical, ProductLaunch, ScreenTutorial, TimelineLaunch and TimelineTutorial render this exported timing plan without code edits.</p>
  <main id="list"></main><label>Beat offset (seconds) <input id="beat" type="number" step="0.01" value="0"></label><p id="summary"></p><p id="error" role="alert"></p><button id="export">Export storyboard and beat grid</button>
- <p>Render with <code>--comp TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json</code>. Run timeline audio with original and edited boards; re-mix and review audio and footage.</p><script type="application/json" id="data">${data}</script><script>${script.replace(/<\/script/gi,'<\\/script')}</script></html>`;
+ <p>Render with <code>--comp Main|ProductLaunch|ScreenTutorial|TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json</code>. Run timeline audio with original and edited boards; re-mix and review audio and footage.</p><script type="application/json" id="data">${data}</script><script>${script.replace(/<\/script/gi,'<\\/script')}</script></html>`;
  const dest=path.resolve(a.out||'timeline-editor.html');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,html);
- return {editor:dest,scenes:board.scenes.length,note:'Open the HTML locally in a browser. Export JSON and render TimelineLaunch or TimelineTutorial with --timeline. Run timeline audio for scene-synced media and review cuts; other footage needs independent sync review.'};
+ return {editor:dest,scenes:board.scenes.length,note:'Open the HTML locally in a browser. Export JSON and render the matching composition with --timeline. Run timeline audio for scene-synced media and review cuts; other footage needs independent sync review.'};
 }
 
 const presets={
+ main:[['hook',3.4],['reframe',4.2],['proof',4.4],['formula',3.2],['cta',2.4],['end',2.4]],
+ 'product-launch':[['problem',8],['demo',19],['features',12],['cta',6]],
+ 'screen-tutorial':[['step',20],['step',20],['step',20]],
  launch:[['problem',8],['demo',19],['features',12],['cta',6]],
  tutorial:[['intro',5],['step',10],['step',10],['outro',5]]
 };
 export function timelineInit(a){
- const kind=String(a._[1]||a.kind||'');if(!presets[kind])die('timeline init needs launch or tutorial');
- const fps=30;let frame=0;const scenes=presets[kind].map(([role,seconds],i)=>{const begin=frame;frame+=seconds*fps;return {id:kind==='tutorial'&&role==='step'?`step-${i}`:role,role,headline:({problem:'A real problem',demo:'Product in action',features:'What changes',cta:'Try it',intro:'A clear tutorial',step:`Step ${i}`,outro:'Review'})[role],fromFrame:begin,toFrame:frame,start:begin/fps,end:frame/fps,previewFrame:begin+Math.floor(seconds*fps*.7)}});
+ const kind=String(a._[1]||a.kind||'');if(!presets[kind])die('timeline init needs main|product-launch|screen-tutorial|launch|tutorial');
+ const fps=30;let frame=0;const scenes=presets[kind].map(([role,seconds],i)=>{const begin=frame;frame+=seconds*fps;return {id:(kind==='tutorial'||kind==='screen-tutorial')&&role==='step'?`step-${i}`:role,role,headline:({problem:'A real problem',demo:'Product in action',features:'What changes',cta:'Try it',intro:'A clear tutorial',step:`Step ${i}`,outro:'Review',hook:'Make videos like this',reframe:'References',proof:'Give feedback until it fits',formula:'The formula',end:'Follow for more'})[role],fromFrame:begin,toFrame:frame,start:begin/fps,end:frame/fps,previewFrame:begin+Math.floor(seconds*fps*.7),sourceFromFrame:begin,sourceToFrame:frame}});
  const file=path.resolve(a.out||`timeline-${kind}.json`);writeJson(file,{version:1,kind,fps,duration:frame/fps,scenes});return {board:file,kind,scenes:scenes.length};
 }
 export function validateRenderBoard(board,kind){
- if(!['launch','tutorial'].includes(kind))throw Error('render timeline only supports TimelineLaunch or TimelineTutorial');
- const allowed=kind==='launch'?new Set(['problem','demo','features','cta']):new Set(['intro','step','outro']);
+ if(!['launch','tutorial','main','product-launch','screen-tutorial'].includes(kind))throw Error('unsupported timeline composition');
+ const allowed=kind==='launch'||kind==='product-launch'?new Set(['problem','demo','features','cta']):kind==='main'?new Set(['hook','reframe','proof','formula','cta','end']):new Set(['intro','step','outro']);
  if(!board||board.fps!==30||!Array.isArray(board.scenes)||board.scenes.length<2||board.scenes.length>12)throw Error('timeline needs 30 fps and 2-12 scenes');
- let end=0;const ids=new Set();for(const s of board.scenes){if(!s.id||ids.has(s.id)||!allowed.has(s.role)||s.fromFrame!==end||!Number.isInteger(s.toFrame)||s.toFrame-s.fromFrame<24)throw Error(`invalid or noncontiguous timeline scene ${s.id||''}`);ids.add(s.id);end=s.toFrame;}
+ let end=0;const ids=new Set();for(const s of board.scenes){if(!s.id||ids.has(s.id)||!allowed.has(s.role)||s.fromFrame!==end||!Number.isInteger(s.toFrame)||s.toFrame-s.fromFrame<24 || (['main','product-launch','screen-tutorial'].includes(kind)&&(!Number.isInteger(s.sourceFromFrame)||!Number.isInteger(s.sourceToFrame)||s.sourceToFrame<=s.sourceFromFrame||s.sourceFromFrame<0||s.sourceToFrame>(kind==='main'?600:kind==='product-launch'?1350:1800))))throw Error(`invalid or noncontiguous timeline scene ${s.id||''}`);ids.add(s.id);end=s.toFrame;}
+ if(['main','product-launch','screen-tutorial'].includes(kind)){const sources=[...board.scenes].sort((a,b)=>a.sourceFromFrame-b.sourceFromFrame);let pos=0;for(const scene of sources){if(scene.sourceFromFrame!==pos)throw Error('legacy source scenes must cover original composition once, with no gaps or overlaps');pos=scene.sourceToFrame;}if(pos!==(kind==='main'?600:kind==='product-launch'?1350:1800))throw Error('legacy source scenes must cover the original composition duration');}
  if(Math.abs(board.duration*30-end)>.01)throw Error('timeline duration differs from scene frames');return board;
 }

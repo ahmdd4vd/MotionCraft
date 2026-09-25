@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
-import {timelineEditor,retimeBoard,shiftBeatGrid,validateRenderBoard} from '../scripts/lib/timeline-editor.mjs';
+import {timelineEditor,timelineInit,retimeBoard,shiftBeatGrid,validateRenderBoard} from '../scripts/lib/timeline-editor.mjs';
 const board={fps:30,duration:10,scenes:[
  {id:'one',start:0,end:4,fromFrame:0,toFrame:120,previewFrame:80,headline:'One',events:[{kind:'click',at:2}],animations:[{kind:'logo_reveal',frame:90}]},
  {id:'two',start:4,end:10,fromFrame:120,toFrame:300,previewFrame:220,headline:'Two'}]};
@@ -31,4 +31,15 @@ test('timeline-aware render board requires contiguous safe scenes and a known ro
  assert.equal(validateRenderBoard(source,'launch').duration,4);
  assert.throws(()=>validateRenderBoard({...source,scenes:[source.scenes[0],{...source.scenes[1],fromFrame:62}]},'launch'),/noncontiguous/);
  assert.throws(()=>validateRenderBoard(source,'tutorial'),/noncontiguous/);
+});
+test('legacy presets preserve source windows while destination reorders and resizes',()=>{
+ const kinds=[['main',600],['product-launch',1350],['screen-tutorial',1800]];
+ for(const [kind,total] of kinds){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'mc-legacy-'));
+  try {const file=path.join(dir,'board.json');timelineInit({_:['init',kind],out:file});const board=JSON.parse(fs.readFileSync(file));assert.equal(board.scenes.at(-1).sourceToFrame,total);
+   const edits=board.scenes.map(s=>({id:s.id,duration:s.end-s.start})).reverse();const edited=retimeBoard(board,edits);assert.equal(edited.scenes[0].sourceFromFrame,board.scenes.at(-1).sourceFromFrame);
+   assert.equal(validateRenderBoard(edited,kind).duration,total/30);
+   const broken={...edited,scenes:edited.scenes.map((s,i)=>i===0?{...s,sourceFromFrame:1}:s)};
+   assert.throws(()=>validateRenderBoard(broken,kind),/source scenes/);
+  }finally{fs.rmSync(dir,{recursive:true,force:true})}
+ }
 });

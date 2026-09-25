@@ -30,7 +30,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   sfx list | make --cues sfx.json [--bpm 93] [--pack soft-pop] [--density 1] [--out audio/sfx.wav]
   mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--duration 52] [--out audio/final.wav]
   beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
-  timeline init launch|tutorial [--out timeline-launch.json]
+  timeline init main|product-launch|screen-tutorial|launch|tutorial [--out timeline-launch.json]
   timeline edit --board storyboard.json [--grid audio/beatgrid.json] [--out timeline-editor.html]
   timeline audio --original original.json --edited storyboard.edited.json [--grid beatgrid.edited.json] --music music.wav [--vo vo.wav] [--outDir audio/retimed]
   timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
@@ -45,7 +45,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   qa pixels <video> [--board storyboard.json] [--outDir out/qa-pixels] | overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
   gpu probe --dir project [--gl angle|egl|swangle]
   worker manifest --dir project --comp Main --gl angle --out render-job.json | verify --dir project --manifest render-job.json
-  render [--require-gpu --gl angle|egl] [--comp TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json --props props.json] [--review out/mix-review/review.json] [--comp Main] [--format 1:1|4:5|9:16] [--all-formats] [--platform ig-feed|reels|tiktok] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
+  render [--require-gpu --gl angle|egl] [--comp Main|MainVertical|ProductLaunch|ScreenTutorial|TimelineLaunch|TimelineTutorial --timeline storyboard.edited.json --grid beatgrid.edited.json --props props.json] [--review out/mix-review/review.json] [--comp Main] [--format 1:1|4:5|9:16] [--all-formats] [--platform ig-feed|reels|tiktok] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
 `;
 const [cmd, ...rest] = process.argv.slice(2); const a = parseArgs(rest);
 try {
