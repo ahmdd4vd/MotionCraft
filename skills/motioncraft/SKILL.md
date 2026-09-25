@@ -25,7 +25,7 @@ node <skill-dir>/scripts/motioncraft.mjs <command>
 
 1. **Reference first.** Never invent a style from nothing. Use a locked style from `styles/` or analyze a reference video the user gives (`ref get` + `ref report`).
 2. **One idea per frame.** One headline, one focus. Headline and hero visual live in separate zones.
-3. **Zero overlaps.** No text may touch other text or leave the safe area. `qa overlap` must pass before you show anything.
+3. **Check overlaps at final pixels.** No text should touch other text or leave the safe area. `qa overlap` only checks instrumented debug boxes; inspect real final frames before claiming the layout is clear.
 4. **Everything is timed to voice and beat.** Words appear when they are spoken. Big moments land on the beat or the drop.
 5. **Only true facts.** Numbers, names, prices and claims must be checked against a live source right before render. Credit third-party examples on screen (`<Credit>`).
 6. **Original or free audio only.** Music is synthesized by the CLI or CC0. Never use licensed tracks.
@@ -145,9 +145,10 @@ This renders a low-res debug pass where every text box is red and every block is
 ```bash
 node <skill-dir>/scripts/motioncraft.mjs render --comp Main --preset wa --audio audio/final.wav --review out/mix-review/review.json --out out/final.mp4
 node <skill-dir>/scripts/motioncraft.mjs qa all out/final.mp4 --comp Main --maxMb 16
+node <skill-dir>/scripts/motioncraft.mjs qa pixels out/final.mp4 --board storyboard.json --dir my-video --outDir out/qa-pixels
 ```
 
-Open `out/qa/sheet.jpg` and look at it yourself. Checklist: [references/qa.md](references/qa.md).
+Open `out/qa/sheet.jpg` and `out/qa-pixels/critical-sheet.jpg`; inspect the critical frames at full resolution and listen to the final export. OCR flags are leads, not proof. See [references/phase3-pixel-review.md](references/phase3-pixel-review.md). Checklist: [references/qa.md](references/qa.md).
 
 ## Step 9 - Deliver and iterate
 

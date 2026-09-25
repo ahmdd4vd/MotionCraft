@@ -7,7 +7,10 @@ Nothing goes to the user until all of these pass.
 ```bash
 node <skill-dir>/scripts/motioncraft.mjs qa overlap --comp Main
 node <skill-dir>/scripts/motioncraft.mjs qa all out/final.mp4 --comp Main --maxMb 16
+node <skill-dir>/scripts/motioncraft.mjs qa pixels out/final.mp4 --board storyboard.json --dir .
 ```
+
+`qa overlap` flags only registered debug boxes and cannot prove that the final pixels are collision-free. `qa pixels` samples the actual exported video at scene starts, ends and preview frames, makes a contact sheet, and runs heuristic OCR checks for tiny or cropped text. Inspect every flagged frame at full size and a phone-sized version, then watch the full video.
 
 `qa overlap` renders the composition in debug mode at 1/4 size. Every `McBox kind="text"` is painted light red, every `McBox kind="block"` light green, and the content is hidden. It then scans every frame:
 

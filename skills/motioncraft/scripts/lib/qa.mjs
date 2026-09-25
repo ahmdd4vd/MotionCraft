@@ -48,5 +48,5 @@ export function qaOverlap(a) {
   const groups = []; for (const h of hits) { const g = groups[groups.length - 1]; if (g && h.frame - g.end <= 2) g.end = h.frame; else groups.push({ start: h.frame, end: h.frame, first: h }); }
   for (const g of groups.slice(0, 12)) { const o = path.join(dir, `overlap_f${g.start}.png`); ff(['-ss', (g.start / fps).toFixed(3), '-i', path.join(tmp, 'dbg.mp4'), '-frames:v', '1', o]); shots.push(o); }
   return { frames, pass: hits.length === 0, problemRanges: groups.map((g) => ({ fromFrame: g.start, toFrame: g.end, fromSec: +(g.start / fps).toFixed(2), toSec: +(g.end / fps).toFixed(2), ...g.first })), screenshots: shots,
-    note: hits.length ? 'Red = text box, green = card/block. Dark red/green = two boxes stacked. Fix by moving to separate zones, exiting the old element first, or shortening text. Mark intentional stickers with allowOverlap.' : 'No text collisions, no stacked blocks, no text in the safe margin.' };
+    note: hits.length ? 'Red = text box, green = card/block. Dark red/green = two boxes stacked. Fix by moving to separate zones, exiting the old element first, or shortening text. Mark intentional stickers with allowOverlap.' : 'No flagged collisions among instrumented debug boxes at this resolution. This does not prove final pixels are collision-free; run qa pixels and inspect final frames.' };
 }
