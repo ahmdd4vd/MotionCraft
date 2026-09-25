@@ -67,7 +67,7 @@ export const Main: React.FC<MainProps> = ({handle, audio, beats = [], mcDebug = 
           <EndCard at={sec(17.8)} handle={handle} line="Follow for more" />
         </Scene>
       </Camera>
-      <MorphTransition at={sec(3.4)-11} holdBefore={10} holdAfter={10}
+      <MorphTransition at={sec(3.4)-11} holdBefore={10} holdAfter={50}
         from={{x:.86,y:.24,size:170,points:[[0,-1],[1,0],[0,1],[-1,0]],color:undefined}}
         to={{x:.76,y:.72,size:110,points:[[-1,-1],[1,-1],[1,1],[-1,1]],color:undefined}} />
       {audio && !mcDebug && <Audio src={staticFile(audio)} />}
