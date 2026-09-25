@@ -34,3 +34,24 @@ test('mix review clips and hash-gated approval reject a changed mix',()=>{
   assert.notEqual(JSON.parse(fs.readFileSync(r.manifest)).sha256,reviewHash(file));
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+test('phase 3 derives cues from scenes and animation timeline while honoring manual overrides',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'mc-auto-'));
+ try {
+  const board=path.join(dir,'board.json'),timeline=path.join(dir,'timeline.json'),out=path.join(dir,'cues.json');
+  fs.writeFileSync(board,JSON.stringify({duration:20,fps:30,scenes:[
+   {id:'intro',start:0,end:5,headline:'Hello'},
+   {id:'demo',start:5,end:13,headline:'Demo',animations:[{kind:'ui_click',at:7},{kind:'logo_reveal',frame:300}]},
+   {id:'silent',start:13,end:20,headline:'Muted',events:[]}
+  ]}));
+  fs.writeFileSync(timeline,JSON.stringify({events:[{scene:'demo',kind:'check',t:9},{scene:'other',kind:'logo',t:10}]}));
+  const r=autoCues({board,timeline,out,maxPerMin:120});const cues=JSON.parse(fs.readFileSync(out)).cues;
+  assert.equal(r.unknown.length,0);
+  assert.ok(cues.some(c=>c.type==='type'&&c.scene==='intro'));
+  assert.ok(cues.some(c=>c.type==='whoosh_in'&&c.scene==='demo'));
+  assert.ok(cues.some(c=>c.type==='button'&&c.t===7));
+  assert.ok(cues.some(c=>c.type==='logo_sting'&&c.scene==='demo'));
+  assert.ok(cues.some(c=>c.type==='check'&&c.scene==='demo'));
+  assert.ok(!cues.some(c=>c.scene==='silent'));
+  assert.ok(!cues.some(c=>c.kind==='logo'&&c.t===10));
+ } finally {fs.rmSync(dir,{recursive:true,force:true});}
+});

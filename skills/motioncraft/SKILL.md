@@ -130,7 +130,7 @@ node <skill-dir>/scripts/motioncraft.mjs mix review --file audio/final.wav --cue
 node <skill-dir>/scripts/motioncraft.mjs mix review --file audio/final.wav --approve
 ```
 
-Music sits under the voice, never on top. SFX are small and sparse: one sound per meaningful event. The mix targets -14 LUFS and -1 dBTP. See [references/music.md](references/music.md), [references/sfx.md](references/sfx.md), and [references/phase2-timeline-audio.md](references/phase2-timeline-audio.md).
+For UI/logo cue timing, export structured animation events to `public/timeline.json` and re-run `sfx auto` with `--timeline public/timeline.json` after `timeline build`. The initial command infers headline and scene boundaries only. Music sits under the voice, never on top. SFX are small and sparse: one sound per meaningful event. The mix targets -14 LUFS and -1 dBTP. See [references/music.md](references/music.md), [references/sfx.md](references/sfx.md), and [references/phase2-timeline-audio.md](references/phase2-timeline-audio.md).
 
 ## Step 7 - Build scenes
 

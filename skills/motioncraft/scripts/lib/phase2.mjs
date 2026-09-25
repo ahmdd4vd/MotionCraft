@@ -7,20 +7,39 @@ import {SFX_TYPES} from './sfx.mjs';
 
 const MAP={typing:'type',type:'type',keypress:'type',click:'button',button:'button',transition:'whoosh_in',enter:'whoosh_in',exit:'whoosh_out',logo:'logo_sting',logo_reveal:'logo_sting',cta:'icon_pop',reveal:'icon_pop',check:'check'};
 const LOUD=new Set(['logo_sting','impact','whoosh_in','whoosh_out']);
-const fallback={hook:[{type:'type',offset:0.45}],reframe:[{type:'whoosh_in',offset:0.05}],proof:[],how:[],cta:[{type:'icon_pop',offset:0.15}],end:[]};
+// Scene structure and exported animation timeline provide automatic, sparse cue candidates.
+// Never infer UI actions or a logo merely because a storyboard prose description mentions one.
+const MOTION_KINDS={text:'typing',text_appear:'typing',headline:'typing',transition:'transition',scene_transition:'transition',ui_click:'click',button_click:'click',ui:'click',logo:'logo_reveal',logo_reveal:'logo_reveal',check:'check'};
+function motionEvents(scene, timeline, start, end, index, fps) {
+ const result=[];
+ if(scene.headline && scene.headline.trim()) result.push({kind:'typing',at:Math.min(end-1/fps,start+0.12),source:'scene.headline'});
+ if(index>0 && scene.transition!==false) result.push({kind:'transition',at:start,source:'scene.boundary'});
+ // The timeline comes from the actual animation plan. Times are absolute seconds;
+ // scene IDs are checked so an event cannot leak into an adjacent scene.
+ const entries=[...(Array.isArray(scene.animations)?scene.animations:[]),
+   ...(Array.isArray(timeline?.events)?timeline.events.filter(e=>e.scene===scene.id||e.sceneId===scene.id):[])];
+ for(const e of entries){
+  const kind=MOTION_KINDS[clean(e.kind||e.type).toLowerCase()];
+  if(kind){ const at=e.at??e.t??(e.frame==null?undefined:Number(e.frame)/fps); if(at==null)die(`animation ${kind} in ${scene.id||index+1} needs at/t/frame`); result.push({kind,at,source:'animation'}); }
+ }
+ return result;
+}
 const clean=x=>String(x??'').trim();
 const seconds=(s,k)=>{const n=Number(s);if(!Number.isFinite(n)||n<0)die(`${k} needs non-negative seconds`);return n;};
 export function autoCues(a){
  const board=readJson(path.resolve(a.board||'storyboard.json'));
  if(!board||!Array.isArray(board.scenes)||!board.scenes.length)die('board missing scenes; pass --board storyboard.json');
  const dur=seconds(board.duration,'duration');if(!dur)die('board duration must be positive');
- const fps=Number(board.fps)||30, raw=[]; let unknown=[];
+ const fps=Number(board.fps??30), raw=[]; let unknown=[];
+ if(!Number.isFinite(fps)||fps<=0)die('board fps must be positive');
+ const timeline=a.timeline?readJson(path.resolve(a.timeline)):null;
+ if(a.timeline && !timeline)die(`cannot read timeline ${a.timeline}`);
  for(const [i,scene] of board.scenes.entries()){
   const start=seconds(scene.start,`scene ${i+1} start`), end=seconds(scene.end,`scene ${i+1} end`);
   if(end<=start||end>dur+0.001)die(`scene ${i+1} has invalid range`);
   const cue=clean(scene.cue).toLowerCase();
-  const events=scene.events??(MAP[cue]||SFX_TYPES.includes(cue)?[{kind:cue,at:start+0.12}]:fallback[scene.role]?.map(e=>({kind:e.type,at:start+e.offset}))||[]);
-  if(cue && !MAP[cue] && !SFX_TYPES.includes(cue) && !scene.events)unknown.push({scene:scene.id||i+1,kind:cue,note:'cue is not a known event; role fallback applied'});
+  const events=scene.events??(cue && (MAP[cue]||SFX_TYPES.includes(cue))?[{kind:cue,at:start+0.12}]:motionEvents(scene,timeline,start,end,i,fps));
+  if(cue && !MAP[cue] && !SFX_TYPES.includes(cue) && !scene.events)unknown.push({scene:scene.id||i+1,kind:cue,note:'cue is not a known event; automatic animation cues used'});
   if(!Array.isArray(events))die(`scene ${i+1} events must be an array`);
   for(const event of events){
    const kind=clean(event.kind||event.type).toLowerCase(), type=MAP[kind]||(SFX_TYPES.includes(kind)?kind:null);
@@ -29,7 +48,7 @@ export function autoCues(a){
    if(at<start-0.001||at>=end||at>=dur)die(`event ${kind} at ${at}s falls outside scene ${scene.id||i+1}`);
    // Sound 1 frame ahead of an on-screen landing. Tiny type/click sounds keep their precise timing.
    const t=Math.max(0,at-((type==='type'||type==='button')?0:1/fps));
-   raw.push({type,t:+t.toFixed(3),snap:false,scene:scene.id||String(i+1),kind});
+   raw.push({type,t:+t.toFixed(3),snap:false,scene:scene.id||String(i+1),kind,source:event.source||'manual'});
   }
  }
  raw.sort((x,y)=>x.t-y.t);
@@ -43,7 +62,7 @@ export function autoCues(a){
   cues.push(c); }
  cues.sort((x,y)=>x.t-y.t);
  const out=path.resolve(a.out||'audio/auto-cues.json');writeJson(out,{duration:dur,fps,cues});
- return {file:out,cues:cues.length,skipped:raw.length-cues.length,unknown,perMinute:+(cues.length/dur*60).toFixed(1),note:'Review cue list against visual events. It is deliberately sparse; silence is valid. Explicit scene.events override role defaults.'};
+ return {file:out,cues:cues.length,skipped:raw.length-cues.length,unknown,perMinute:+(cues.length/dur*60).toFixed(1),note:'Review generated cues against the rendered video. Scene headlines and boundaries are inferred; UI and logo cues need structured animation timeline events. Explicit scene.events overrides all inferred cues for that scene.'};
 }
 export function moodOptions(a){
  const moods={calm:['cinematic-soft','dreamy'],warm:['warm-major','calm-punch'],focused:['lofi-desk','dark-minimal'],bright:['tech-bright','warm-major'],premium:['cinematic-soft','dark-minimal']};

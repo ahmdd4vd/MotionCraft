@@ -28,7 +28,7 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   template launch|tutorial --spec props.json [--dir project] [--duration 45] (validate real frames)
   storyboard --brief brief.json [--out storyboard.json] [--md storyboard.md]
   preview --board storyboard.json [--comp Main] [--scale 0.35] [--out out/preview-stills]
-  sfx auto --board storyboard.json [--maxPerMin 24] [--out audio/auto-cues.json]
+  sfx auto --board storyboard.json [--timeline public/timeline.json] [--maxPerMin 24] [--out audio/auto-cues.json]
   music moods --mood premium|calm|warm|focused|bright
   mix review --file audio/final.wav [--cues audio/auto-cues.json] [--out out/mix-review]; after listening: --approve
   cache3d --comp LogoOnly --start 0 --end 89 --sources src/scenes/Logo.tsx,src/style.json [--scale 1]

@@ -107,3 +107,7 @@ Kredit topik dan tools di video contoh: [CREDITS.md](CREDITS.md).
 ## Output sosial 1:1, 4:5, 9:16
 
 Satu komposisi responsif bisa diekspor ke tiga kanvas asli (1080x1080 IG feed, 1080x1350 IG feed, 1080x1920 TikTok). Teks, hero, kredit, dan end card pindah posisi, bukan sekadar crop tengah. Jalankan `render --all-formats`; untuk Reels gunakan `--format 9:16 --platform reels` terpisah. Lihat [panduan format dan batasannya](skills/motioncraft/references/social-formats.md). UI aplikasi bisa berubah, jadi cek tiap ekspor di aplikasi sebelum upload.
+
+### SFX otomatis dari data animasi
+
+`motioncraft sfx auto --board storyboard.json --timeline public/timeline.json --out audio/auto-cues.json` bikin cue jarang dari headline dan pergantian scene, lalu event animasi terstruktur (teks, transisi, klik UI, check, logo reveal). Timeline opsional; aksi UI/logo tidak ditebak dari deskripsi. `scene.events` tetap bisa override penuh (`[]` berarti sengaja hening). Dengarkan dan cek hasil sebelum rilis: alat ini belum membaca sembarang kode animasi Remotion atau menilai apakah suaranya cocok. Lihat [panduan timeline audio](skills/motioncraft/references/phase2-timeline-audio.md).

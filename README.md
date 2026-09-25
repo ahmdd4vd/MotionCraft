@@ -107,3 +107,7 @@ Credits for the showcase topics and tools: [CREDITS.md](CREDITS.md).
 ## Social output: 1:1, 4:5, 9:16
 
 One responsive Remotion composition can export three real canvas dimensions (1080x1080 IG feed, 1080x1350 IG feed, 1080x1920 TikTok), with repositioned text, hero, credits and end card rather than center-cropping. `render --all-formats` exports the three sizes; use `--format 9:16 --platform reels` for a separate Reels safe layout. See [social formats and caveats](skills/motioncraft/references/social-formats.md). Platform UI varies, so inspect each final export in its app before posting.
+
+### Automatic SFX from animation data
+
+`motioncraft sfx auto --board storyboard.json --timeline public/timeline.json --out audio/auto-cues.json` creates sparse cue timing from scene headlines and boundaries plus structured animation events (text, transition, UI click, check, logo reveal). The timeline is optional; the tool never guesses UI or logo actions from prose. `scene.events` remains an exact override (`[]` means silence). Review and listen before publishing: this does not parse arbitrary Remotion animation code or judge whether a sound fits. See [timeline audio](skills/motioncraft/references/phase2-timeline-audio.md).
