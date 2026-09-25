@@ -41,6 +41,10 @@ Klik preview-nya buat nonton video lengkap pakai suara.
 | **QA otomatis** | Ngecek tiap frame: teks tabrakan, kartu numpuk, teks kepinggiran, plus loudness dan ukuran file. |
 | **Siap dibagiin** | Preset render buat WhatsApp (di bawah 16 MB), Instagram, YouTube, dan file master. |
 
+## Review lebih cepat (v0.2 fase 1)
+
+Brief bisa jadi storyboard dengan durasi per scene, lalu still asli tiap scene dan contact sheet sebelum render penuh. 3D yang berat bisa disimpan jadi rangkaian frame supaya revisi teks/audio tidak mengulang WebGL. Ini alur perencanaan dan render, bukan penulis naskah otomatis. Lihat [panduan fase 1](skills/motioncraft/references/phase1-planning-and-preview.md).
+
 ## Install
 
 ```bash

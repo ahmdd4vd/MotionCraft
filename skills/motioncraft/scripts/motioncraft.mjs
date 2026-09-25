@@ -6,6 +6,7 @@ import * as C from './lib/commands.mjs';
 import { qaFile, qaAudio, qaSheet, qaOverlap } from './lib/qa.mjs';
 import { cmdRender } from './lib/render.mjs';
 import { cmdStyle } from './lib/style.mjs';
+import {storyboard, preview, cache3d} from './lib/phase1.mjs';
 
 const HELP = `motioncraft <command> [options]      (all output is JSON unless noted)
 
@@ -21,6 +22,9 @@ const HELP = `motioncraft <command> [options]      (all output is JSON unless no
   mix --vo vo.wav --music audio/music.wav --sfx audio/sfx.wav [--out audio/final.wav]
   beat grid --bpm 93 --dur 52.6 | snap cues.json [--grid audio/beatgrid.json] [--maxMs 80]
   timeline build [--words audio/words.json] [--grid audio/beatgrid.json] [--out public/timeline.json]
+  storyboard --brief brief.json [--out storyboard.json] [--md storyboard.md]
+  preview --board storyboard.json [--comp Main] [--scale 0.35] [--out out/preview-stills]
+  cache3d --comp LogoOnly --start 0 --end 89 --sources src/scenes/Logo.tsx,src/style.json [--scale 1]
   qa overlap [--comp Main] | sheet <video> | audio <file> | file <video> [--maxMb 16] | all <video> [--comp Main] [--maxMb 16]
   render [--comp Main] [--preset wa|ig|yt|master] [--audio audio/final.wav] [--out out/final.mp4]
 `;
@@ -39,6 +43,9 @@ try {
     case 'beat': out(C.cmdBeat(a)); break;
     case 'timeline': out(C.cmdTimeline(a)); break;
     case 'render': out(cmdRender(a)); break;
+    case 'storyboard': out(storyboard(a)); break;
+    case 'preview': out(preview(a)); break;
+    case 'cache3d': out(cache3d(a)); break;
     case 'qa': { const s = a._[0], f = a._[1];
       if (s === 'overlap') out(qaOverlap(a)); else if (s === 'sheet') out(qaSheet(f, a)); else if (s === 'audio') out(qaAudio(f)); else if (s === 'file') out(qaFile(f, a));
       else if (s === 'all') { const r = { file: qaFile(f, a), audio: qaAudio(f), sheet: qaSheet(f, a), overlap: a.comp || a.dir ? qaOverlap(a) : 'skipped (pass --comp/--dir to run inside the project)' }; r.pass = r.file.pass && r.audio.pass && (typeof r.overlap === 'string' || r.overlap.pass); out(r); }

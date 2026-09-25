@@ -87,6 +87,15 @@ node <skill-dir>/scripts/motioncraft.mjs style check src/style.json
 
 Styles and knobs: [references/customization.md](references/customization.md). Style list: `style list`.
 
+## Phase 1 - Plan and review before a full render
+
+Create a `brief.json` with topic, audience, goal, duration, language, handle and any verified proof. `storyboard` makes an eight-role timing scaffold (or uses `brief.scenes`); the agent writes the actual copy and validates claims. After building the scenes, `preview` renders one **real Remotion still** per scene and a contact sheet. Pre-render expensive 3D in an isolated composition with `cache3d` and replace it with `<CachedFrames>` for later text/audio revisions. Details and limits: [references/phase1-planning-and-preview.md](references/phase1-planning-and-preview.md).
+
+```bash
+node <skill-dir>/scripts/motioncraft.mjs storyboard --brief brief.json --out storyboard.json
+node <skill-dir>/scripts/motioncraft.mjs preview --dir my-video --board storyboard.json --comp Main --scale 0.35
+```
+
 ## Step 5 - Voiceover and timing
 
 ```bash

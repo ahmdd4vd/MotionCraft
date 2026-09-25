@@ -41,6 +41,10 @@ Click a preview to watch the full video with sound.
 | **Automatic QA** | Scans every frame for overlapping text, stacked cards and text in the margins, plus loudness and file-size checks. |
 | **Ready to share** | Render presets for WhatsApp (under 16 MB), Instagram, YouTube and a master file. |
 
+## Faster review (v0.2 phase 1)
+
+A brief can produce a timed storyboard for approval, then one real still per scene and a contact sheet before a full render. Expensive 3D can be cached as image frames for text/audio revisions. This is a planning and render workflow, not automatic scriptwriting. See the [phase 1 guide](skills/motioncraft/references/phase1-planning-and-preview.md).
+
 ## Install
 
 ```bash
