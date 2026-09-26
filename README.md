@@ -41,6 +41,14 @@ Click a preview to watch the full video with sound.
 | **Honest QA** | Debug-box overlap checks plus samples from the final export: contact sheets, phone-size text and 9:16 UI-zone flags, headline-area and font checks. Samples are review leads, not proof every frame is clear. |
 | **Ready to share** | Render presets for WhatsApp (under 16 MB), Instagram, YouTube and a master file. |
 
+## New in v0.5
+
+- **Perspective 3D camera.** Dolly, orbit and target keyframes move the actual 3D camera in `Logo3D`, `Mascot` and `FloatingShapes`, with depth-separated objects for parallax. Set per-shot `cameraMove` keys or use the five styles' `three.camera.moves` defaults. This does not move DOM text. [Animation guide](skills/motioncraft/references/animation-system.md#building-blocks).
+- **Materials and light.** Choose ceramic, metal or glass finishes for 3D objects; each style controls the lights, physical material settings and soft shadows. An optional depth-aware DOF pass is available but **off by default**: it costs more to render and can darken transmissive materials. Check your own render backend before enabling it. [Animation guide](skills/motioncraft/references/animation-system.md#building-blocks).
+- **Beat-aware motion.** Pass a beat array from the music's real beatgrid to snap selected entrances within 80 ms and add restrained 3D pulses. Without supplied beats, the original timing stays unchanged. Render with the matching music and listen before publishing. [Beat guide](skills/motioncraft/references/animation-system.md#beat-locked-visual-accents).
+- **Kinetic type and count-up.** `<Headline reveal="character">` staggers characters without shifting the line; `<Counter from={20} to={100}>` animates a cited number. Character timing and number duration follow each style's tokens. Keep the copy short, inspect phone-sized text, and credit real numbers. [Typography guide](skills/motioncraft/references/typography.md).
+- **Authored morph handoff.** `MorphTransition` interpolates matching polygon vertices, position and size across a scene boundary, with optional holds and a fade-out. The example morphs a diamond into a square. It is not automatic arbitrary 3D mesh morphing; other scene cuts still use the existing crossfade. [Morph guide](skills/motioncraft/references/animation-system.md#morphing-scene-handoff).
+
 ## New in v0.4
 
 - **Storyboard and quick preview.** `storyboard` turns a brief into exact scene frame ranges and a copy-review scaffold. After you build the scenes, `preview` renders real stills and a contact sheet. `cache3d` stores expensive 3D frames so text/audio edits do not rerender WebGL. This does not write or approve the script for you. [Planning guide](skills/motioncraft/references/phase1-planning-and-preview.md).

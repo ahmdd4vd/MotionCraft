@@ -41,6 +41,14 @@ Klik preview-nya buat nonton video lengkap pakai suara.
 | **QA jujur** | Cek overlap kotak debug dan sampel frame dari video akhir: contact sheet, tanda teks kecil di HP, area UI 9:16, area headline, dan font. Sampelnya petunjuk review, bukan bukti semua frame bebas tabrakan. |
 | **Siap dibagiin** | Preset render buat WhatsApp (di bawah 16 MB), Instagram, YouTube, dan file master. |
 
+## Baru di v0.5
+
+- **Kamera perspektif 3D.** Keyframe dolly, orbit dan arah pandang menggerakkan kamera 3D asli di `Logo3D`, `Mascot` dan `FloatingShapes`; objek di kedalaman berbeda menghasilkan parallax. Atur `cameraMove` per shot atau pakai default `three.camera.moves` di kelima gaya. Teks DOM tidak ikut digerakkan. [Panduan animasi](skills/motioncraft/references/animation-system.md#building-blocks).
+- **Material dan cahaya.** Pilih finishing ceramic, metal atau glass buat objek 3D; tiap gaya mengatur material fisik, lighting dan bayangan lembut. Efek DOF yang memperhitungkan kedalaman tersedia, tetapi **mati secara default** karena render lebih berat dan material transparan bisa terlihat lebih gelap. Cek hasil di backend render kamu sebelum menyalakannya. [Panduan animasi](skills/motioncraft/references/animation-system.md#building-blocks).
+- **Gerak mengikuti beat.** Berikan array beat dari beatgrid musik asli agar beberapa entrance menempel ke beat terdekat (maksimal bergeser 80 ms), plus pulse 3D yang halus. Tanpa data beat, timing lama tetap. Render dengan musik yang cocok, lalu dengarkan sebelum dipublikasikan. [Panduan beat](skills/motioncraft/references/animation-system.md#beat-locked-visual-accents).
+- **Tipografi kinetik dan angka bergerak.** `<Headline reveal="character">` memunculkan karakter satu per satu tanpa menggeser baris; `<Counter from={20} to={100}>` menghitung naik ke angka yang diberi sumber. Durasi mengikuti token tiap gaya. Jaga teks singkat, cek ukuran di HP dan cantumkan kredit angka asli. [Panduan tipografi](skills/motioncraft/references/typography.md).
+- **Morph transisi yang disusun manual.** `MorphTransition` mengubah titik-titik poligon yang berpasangan, posisi dan ukuran melintasi batas scene, dengan opsi hold dan fade-out. Contohnya mengubah belah ketupat menjadi persegi. Belum bisa otomatis morph sembarang mesh 3D; scene lain tetap pakai crossfade lama. [Panduan morph](skills/motioncraft/references/animation-system.md#morphing-scene-handoff).
+
 ## Baru di v0.4
 
 - **Storyboard dan preview cepat.** `storyboard` mengubah brief jadi rentang frame per scene dan kerangka naskah buat direview. Setelah scene dibangun, `preview` bikin still asli dan contact sheet. `cache3d` menyimpan frame 3D yang berat, jadi revisi teks/audio tidak perlu render WebGL ulang. Naskah tetap harus ditulis dan di-approve. [Panduan perencanaan](skills/motioncraft/references/phase1-planning-and-preview.md).
